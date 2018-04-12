@@ -55,8 +55,10 @@ entity_patterns = (
     "<{keyword}>课",
     "<{keyword}>课程",
     "<{keyword}>的课程",
+    "<{keyword}>的知识",
     "<{keyword}>讲座",
     "<{keyword}>的讲座",
+    "<{keyword}>的内容",
     "<{keyword}>演讲",
     "<{keyword}>的演讲",
 )
@@ -76,6 +78,8 @@ hellos = (
     "问一下",
     "你",
     "你们这里",
+    "我说",
+    "不知道",
     "麻烦你",
     "",
 )

@@ -153,7 +153,7 @@ def train(model, dataset, use_gpu):
             count += 1
             if count % 10000 == 0:
                 print('processed sentences count = ', count)
-            if count % 100000 == 0:
+            if count % 50000 == 0:
                 model.save(_default_model_dump_file)
 
     return model
