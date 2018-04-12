@@ -5,57 +5,103 @@ import random
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'new_hans.txt'
 
-patterns = (
+search_ops = (
+    "",
+    "",
+    "",
+    "找一下",
+    "查",
+    "查一下",
+    "搜",
+    "搜一下",
+    "查询",
+    "查询一下",
+    "搜索",
+    "搜索一下",
+    "搜寻",
+    "搜寻一下",
+    "搜索",
+    "查找",
+    "找得到",
+    "查找",
+    "搜索一下",
+    "有",
+    "有没有",
+    "有多少",
+    "有几个",
+    "这里有多少",
+    "这里有",
+    "找找",
+    "找到",
+    "搜到",
+)
+entity_patterns = (
     "<{keyword}>",
     "<{keyword}>",
     "<{keyword}>",
-    "找一下<{keyword}>",
-    "查一下<{keyword}>",
-    "搜一下<{keyword}>",
-    "查询一下<{keyword}>",
-    "查询<{keyword}>",
-    "搜索<{keyword}>",
-    "搜寻<{keyword}>",
-    "搜索一下<{keyword}>",
-    "搜索课程<{keyword}>",
-    "查找课程<{keyword}>",
-    "搜索一下<{keyword}>",
-    "有没有<{keyword}>",
-    "有<{keyword}>",
-    "找找<{keyword}>",
-    "找到<{keyword}>",
-    "搜到<{keyword}>",
+    "<{keyword}>",
+    "<{keyword}>",
+    "课程<{keyword}>",
+    "关于<{keyword}>",
+    "有关<{keyword}>的",
+    "介绍<{keyword}>的",
+    "讲述<{keyword}>的",
+    "有关<{keyword}>",
+    "介绍<{keyword}>",
+    "讲述<{keyword}>",
+    "<{keyword}>相关",
+    "<{keyword}>相关的",
+    "<{keyword}>类",
+    "<{keyword}>课程",
+    "<{keyword}>的课程",
+    "<{keyword}>讲座",
+    "<{keyword}>的讲座",
 )
 
-headers = (
+hellos = (
     "请问",
+    "请",
+    "请你",
     "麻烦问一下",
+    "敢问",
+    "麻烦",
+    "麻烦一下",
     "你好",
-    "Hi,",
-    "嗨,",
-    "喂,",
+    "Hi",
+    "嗨",
+    "喂",
     "问一下",
+    "你",
+    "你们这里",
     "麻烦你",
     "",
 )
 
 seconds = (
+    "",
+    "",
+    "请",
+    "请你",
     "能不能",
     "可不可以",
+    "知不知道",
     "可否",
     "能否",
     "是否",
     "帮我",
-    "",
+    "替我",
+    "这里",
 )
 
 tailers = (
     "",
-    ",好吗",
-    ",可以吗",
+    "",
+    "",
     "好吗",
-    "相关的"
     "可以吗",
+    "好吗",
+    "可以吗",
+    "行吗",
 )
 
 
@@ -86,11 +132,16 @@ def generate_dataset(size=20000000):
     count = 0
     while count < size:
         w = random.choice(ws)
-        h = random.choice(headers)
+        h = random.choice(hellos)
         s = random.choice(seconds)
-        p = random.choice(patterns)
+        op = random.choice(search_ops)
+        entity = random.choice(entity_patterns)
         t = random.choice(tailers)
-        sentence = h + s + p.format(keyword=w) + t
+        if random.randint(0, 1) == 0 and h:
+            h = h + ','
+        if random.randint(0, 1) == 0 and t:
+            t = t + ','
+        sentence = h + s + op + entity.format(keyword=w) + t
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
         words = [w for w, _ in tags]
