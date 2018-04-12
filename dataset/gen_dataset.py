@@ -77,6 +77,7 @@ hellos = (
     "哪里",
     "你好",
     "喂",
+    "喔",
     "嗨",
     "哈啰",
     "我说",
@@ -169,7 +170,14 @@ def generate_dataset(size=20000000):
             h += random.choice(puncts)
         if t:
             t += random.choice(puncts)
-        sentence = h + s + op + entity.format(keyword=w) + t
+
+        if (h or s) or search_ops:
+            if random.randint(0, 10) == 0:
+                noise = random.choice(ws)
+        else:
+            noise = ""
+
+        sentence = noise + h + s + op + entity.format(keyword=w) + t
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
         words = [w for w, _ in tags]
