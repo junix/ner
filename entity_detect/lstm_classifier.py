@@ -18,10 +18,10 @@ _default_transformer_dump_file = _model_dump_dir + os.path.sep + 'transformer.pi
 _default_model_dump_file = _model_dump_dir + os.path.sep + 'model.dump'
 
 
-class Classifier(nn.Module):
+class EntityRecognizer(nn.Module):
 
     def __init__(self, input_size=-1, num_layers=1, hidden_size=256):
-        super(Classifier, self).__init__()
+        super(EntityRecognizer, self).__init__()
         self.use_gpu = False
         self.hidden_size = hidden_size
         self.input_size = input_size
@@ -67,11 +67,6 @@ class Classifier(nn.Module):
         tag_space = self.hidden2tag(lstm_out.view(len(words), -1))
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores
-        # lstm_out = lstm_out[-1:]
-        # out = self.relu(lstm_out.view(1, -1))
-        # klass = self.hidden2class(out)
-        # return klass
-        # return F.sigmoid(klass)
 
     def save(self, file):
         torch.save(self, file)
@@ -124,8 +119,6 @@ def train(model, dataset, use_gpu):
         for sentence, target in training_dataset:
             sentence = to_var(sentence, use_gpu)
             target = to_var(target, use_gpu).long()
-            # sentence_in = to_var(sentence)
-            # target_in = to_var(target)
             # Step 1. Remember that Pytorch accumulates gradients.
             # We need to clear them out before each instance
             model.zero_grad()
@@ -138,7 +131,6 @@ def train(model, dataset, use_gpu):
             # Variables of word indices.
 
             # targets = prepare_sequence(tags, tag_to_ix)
-
             # Step 3. Run our forward pass.
             tag_scores = model.forward(sentence)
 
@@ -171,9 +163,8 @@ def train_and_dump(load_old=False, use_gpu=False):
         model = torch.load(_default_model_dump_file)
     else:
         # TODO:
-        model = Classifier(input_size=400)
+        model = EntityRecognizer(input_size=400)
     train(model, dataset, use_gpu=use_gpu)
-    torch.save(model, _default_model_dump_file)
 
 
 def load_predict(model=None, use_gpu=False, output_keyword=False):
@@ -200,7 +191,3 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
 
     return predict
 
-
-def accu(predict, xs, ys):
-    ys_hat = predict(xs)
-    return np.sum(ys_hat == ys) / len(xs)
