@@ -52,10 +52,13 @@ entity_patterns = (
     "<{keyword}>相关",
     "<{keyword}>相关的",
     "<{keyword}>类",
+    "<{keyword}>课",
     "<{keyword}>课程",
     "<{keyword}>的课程",
     "<{keyword}>讲座",
     "<{keyword}>的讲座",
+    "<{keyword}>演讲",
+    "<{keyword}>的演讲",
 )
 
 hellos = (
@@ -97,12 +100,16 @@ tailers = (
     "",
     "",
     "",
+    "?",
+    "吗",
     "好吗",
     "可以吗",
     "好吗",
     "可以吗",
     "行吗",
 )
+
+puncts = ('', ',', '，', '.', '。', '!', '！', '?', '？')
 
 
 def read_keywords():
@@ -137,10 +144,11 @@ def generate_dataset(size=20000000):
         op = random.choice(search_ops)
         entity = random.choice(entity_patterns)
         t = random.choice(tailers)
-        if random.randint(0, 1) == 0 and h:
-            h = h + ','
-        if random.randint(0, 1) == 0 and t:
-            t = t + ','
+
+        if h:
+            h += random.choice(puncts)
+        if t:
+            t += random.choice(puncts)
         sentence = h + s + op + entity.format(keyword=w) + t
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
