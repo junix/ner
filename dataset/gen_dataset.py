@@ -3,7 +3,7 @@ import jieba
 import random
 
 _current_dir = os.path.dirname(__file__)
-_new_hans_dict = _current_dir + '/' + 'new_hans.txt'
+_new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 
 search_ops = (
     "",
@@ -73,7 +73,6 @@ hellos = (
     "亲",
     "你们",
     "你们这里",
-    "你们云学堂",
     "这里",
     "哪里",
     "你好",
@@ -137,8 +136,9 @@ def read_keywords():
         for line in f:
             try:
                 word, tag, *_ = line.split('\t')
-                if tag and tag[0] in ('n', 'i', 'v', 'g'):
-                    yield word
+                yield word
+                # if tag and tag[0] in ('n', 'i', 'v', 'g', 'l', 'd'):
+                #     yield word
             except:
                 pass
 
