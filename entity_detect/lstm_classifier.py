@@ -153,10 +153,9 @@ def train(model, dataset, use_gpu):
             optimizer.step()
             count += 1
             if count % 10000 == 0:
-                print('processed sentences count = %d', count)
+                print('processed sentences count = ', count)
             if count % 100000 == 0:
                 model.save(_default_model_dump_file)
-                print('accu = %f', accu())
 
     return model
 

@@ -6,9 +6,23 @@ _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'new_hans.txt'
 
 patterns = (
+    "<{keyword}>"
     "帮我找一下<{keyword}>,好吗？",
     "查询一下<{keyword}>,好吗？",
-    "查询一下<{keyword}>",
+    "查询<{keyword}>",
+    "搜索<{keyword}>",
+    "搜寻<{keyword}>",
+    "搜索一下<{keyword}>",
+    "搜索课程<{keyword}>",
+    "查找课程<{keyword}>",
+    "海,搜索一下<{keyword}>",
+    "你好,搜索一下<{keyword}>",
+    "查一下<{keyword}>",
+    "有没有<{keyword}>",
+    "找一下<{keyword}>",
+    "找找<{keyword}>",
+    "能不能招到<{keyword}>",
+    "能不能搜到<{keyword}>",
 )
 
 
