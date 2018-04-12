@@ -97,7 +97,6 @@ def to_var(val, use_gpu=False):
 
 
 def train(model, dataset, use_gpu):
-    dataset = list(dataset)
     optimizer = optim.SGD(model.parameters(), lr=0.1)
     loss_function = nn.NLLLoss()
 
@@ -110,7 +109,8 @@ def train(model, dataset, use_gpu):
     # xs = [to_var(x, use_gpu=use_gpu) for x in xs]
     # ys = [to_var(y, use_gpu=use_gpu) for y in ys]
     # xs_test = xs[:testset_size]
-    training_dataset = [(to_var(x, use_gpu), to_var(y, use_gpu).long()) for x, y in dataset]
+    # training_dataset = [(to_var(x, use_gpu), to_var(y, use_gpu).long()) for x, y in dataset]
+    training_dataset = dataset
 
     # def accu():
     #     ys_hat = F.sigmoid(torch.cat([model[x] for x in xs_test]))
@@ -121,10 +121,9 @@ def train(model, dataset, use_gpu):
 
     count = 1
     for epoch in range(60):  # again, normally you would NOT do 300 epochs, it is toy data
-        random.shuffle(training_dataset)
         for sentence, target in training_dataset:
-            # sentence = to_var(sentence, use_gpu)
-            # target = to_var(target, use_gpu).long()
+            sentence = to_var(sentence, use_gpu)
+            target = to_var(target, use_gpu).long()
             # sentence_in = to_var(sentence)
             # target_in = to_var(target)
             # Step 1. Remember that Pytorch accumulates gradients.
@@ -161,14 +160,13 @@ def train(model, dataset, use_gpu):
 
 
 def load_dataset():
-    dataset = list(generate_dataset())
-    random.shuffle(dataset)
+    dataset = generate_dataset()
     for xs, y_true in dataset:
         yield transformer.transform(xs), np.array(y_true)
 
 
 def train_and_dump(load_old=False, use_gpu=False):
-    dataset = list(load_dataset())
+    dataset = load_dataset()
     if load_old:
         model = torch.load(_default_model_dump_file)
     else:
