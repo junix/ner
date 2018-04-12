@@ -191,7 +191,6 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
 
         phrase = []
         for word, tag in zip(words, tags):
-            print(word,tag)
             if tag == 1:
                 phrase.append(word)
             else:

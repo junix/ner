@@ -81,7 +81,7 @@ def tagging(words):
             yield w, next_mark
 
 
-def generate_dataset(size=200000):
+def generate_dataset(size=20000000):
     ws = list(read_keywords())
     count = 0
     while count < size:
