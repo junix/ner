@@ -64,7 +64,8 @@ entity_patterns = (
 
 hellos = (
     "",
-    "Hi",
+    "hi",
+    "hello",
     "不知道",
     "你",
     "你们",
