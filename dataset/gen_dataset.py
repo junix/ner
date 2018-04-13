@@ -38,34 +38,51 @@ simple_entity_patterns = (
     "<{keyword}>",
 )
 
-composed_entity_patterns = (
-    "<{keyword}>演讲",
-    "<{keyword}>的内容",
-    "<{keyword}>的演讲",
-    "<{keyword}>的知识",
-    "<{keyword}>方面的",
-    "<{keyword}>的讲座",
-    "<{keyword}>的课程",
-    "<{keyword}>的文档",
-    "<{keyword}>的资料",
-    "<{keyword}>的视频",
-    "<{keyword}>相关",
-    "<{keyword}>相关的",
-    "<{keyword}>类",
-    "<{keyword}>讲座",
-    "<{keyword}>课",
-    "<{keyword}>课程",
-    "介绍<{keyword}>",
-    "介绍<{keyword}>的",
-    "关于<{keyword}>",
-    "有关<{keyword}>",
-    "有关<{keyword}>的",
-    "讲述<{keyword}>",
-    "讲述<{keyword}>的",
-    "课程<{keyword}>",
+entity_fields = (
+    "演讲",
+    "的内容",
+    "的演讲",
+    "的知识",
+    "知识",
+    "方面的",
+    "的讲座",
+    "的课程",
+    "的文档",
+    "的资料",
+    "的视频",
+    "相关的",
+    "类",
+    "讲座",
+    "课",
+    "课程",
 )
 
-entity_patterns = simple_entity_patterns + composed_entity_patterns
+
+def get_a_composed_entity_pattern():
+    v = random.randint(0, 3)
+    if v == 0:
+        return random.choice(abouts) + '<{keyword}>'
+    if v == 1:
+        return "<{keyword}>" + random.choice(entity_fields)
+
+    return random.choice(abouts) + '<{keyword}>' + random.choice(entity_fields)
+
+
+abouts = (
+    "介绍",
+    "关于",
+    "有关",
+    "讲述",
+    "叙述",
+    "课程",
+)
+
+
+def get_a_entity_pattern():
+    if random.randint(0, 3) <= 0:
+        return random.choice(simple_entity_patterns)
+    return get_a_composed_entity_pattern()
+
 
 hellos = (
     "",
@@ -153,8 +170,8 @@ _all_words = tuple(set(_read_words()))
 _all_words_and_puncts = _all_words + puncts
 
 
-def fake_sentence(max_word_len=4, with_punct=True):
-    word_len = random.randint(0, max_word_len)
+def fake_sentence(min_word_cnt=0, max_word_cnt=4, with_punct=True):
+    word_len = random.randint(min_word_cnt, max_word_cnt)
     if with_punct:
         return ''.join([random.choice(_all_words_and_puncts) for _ in range(word_len)])
     else:
@@ -175,15 +192,15 @@ def tagging(words):
 def generate_sentence():
     while True:
         ws = _all_words
-        w = fake_sentence(max_word_len=3, with_punct=False)
+        w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
         h = random.choice(hellos)
         s = random.choice(seconds)
         op = random.choice(search_ops)
 
         if op:
-            entity = random.choice(entity_patterns)
+            entity = get_a_entity_pattern()
         else:
-            entity = random.choice(composed_entity_patterns)
+            entity = get_a_composed_entity_pattern()
 
         t = random.choice(tailers)
 
@@ -194,7 +211,7 @@ def generate_sentence():
 
         noise = ""
         if (h or s) or search_ops and random.randint(0, 20) == 0:
-            noise = fake_sentence()
+            noise = fake_sentence(max_word_cnt=4)
             if random.randint(0, 5) == 0:
                 noise += random.choice(puncts)
 
