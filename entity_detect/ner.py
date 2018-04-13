@@ -97,7 +97,7 @@ def train(model, dataset, use_gpu):
 
     model.change_context(use_gpu)
     # See what the scores are before training
-    # Note that element i,j of the output is the score for tag j for word i.
+    # Note that element i,j of the output is the score for ner j for word i.
 
     # testset_size = 10000
     # ys_test = ys[:testset_size]

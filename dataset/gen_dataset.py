@@ -194,10 +194,10 @@ def _read_words():
     with open(_new_hans_dict, 'r') as f:
         for line in f:
             try:
-                # word, tag, *_ = line.split(' \t')
+                # word, ner, *_ = line.split(' \t')
                 word, *_ = re.split('\s', line)
                 yield word
-                # if tag and tag[0] in ('n', 'i', 'v', 'g', 'l', 'd'):
+                # if ner and ner[0] in ('n', 'i', 'v', 'g', 'l', 'd'):
                 #     yield word
             except Exception as e:
                 print(e)
