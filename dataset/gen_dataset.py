@@ -7,8 +7,6 @@ _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 
 search_ops = (
     "",
-    "",
-    "",
     "找",
     "找找",
     "找一下",
@@ -35,12 +33,11 @@ search_ops = (
     "哪里有",
     "这里有多少",
 )
-entity_patterns = (
+simple_entity_patterns = (
     "<{keyword}>",
-    "<{keyword}>",
-    "<{keyword}>",
-    "<{keyword}>",
-    "<{keyword}>",
+)
+
+composed_entity_patterns = (
     "<{keyword}>演讲",
     "<{keyword}>的内容",
     "<{keyword}>的演讲",
@@ -63,6 +60,9 @@ entity_patterns = (
     "讲述<{keyword}>的",
     "课程<{keyword}>",
 )
+
+entity_patterns = simple_entity_patterns + composed_entity_patterns
+
 
 hellos = (
     "",
@@ -163,7 +163,12 @@ def generate_dataset(size=20000000):
         h = random.choice(hellos)
         s = random.choice(seconds)
         op = random.choice(search_ops)
-        entity = random.choice(entity_patterns)
+
+        if op:
+            entity = random.choice(entity_patterns)
+        else:
+            entity = random.choice(composed_entity_patterns)
+
         t = random.choice(tailers)
 
         if h:
