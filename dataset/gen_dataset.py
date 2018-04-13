@@ -171,11 +171,9 @@ def generate_dataset(size=20000000):
         if t:
             t += random.choice(puncts)
 
-        if (h or s) or search_ops:
-            if random.randint(0, 10) == 0:
-                noise = random.choice(ws)
-        else:
-            noise = ""
+        noise = ""
+        if (h or s) or search_ops and random.randint(0, 10) == 0:
+            noise = random.choice(ws)
 
         sentence = noise + h + s + op + entity.format(keyword=w) + t
         words = list(jieba.cut(sentence))
