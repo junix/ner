@@ -10,72 +10,108 @@ search_ops = (
     "",
     "找",
     "找找",
-    "找一下",
     "找到",
     "找得到",
     "搜",
     "搜搜",
-    "搜一下",
     "搜寻",
-    "搜寻一下",
     "搜索",
-    "搜索一下",
     "有",
     "有几个",
     "有多少",
     "有没有",
     "查",
     "查查",
-    "查一下",
     "查找",
     "查询",
-    "查询一下",
     "这里有",
     "哪里有",
     "这里有多少",
 )
+
+search_op_advs = (
+    "",
+    "",
+    "一下",
+)
+
+
+def get_a_search_op():
+    op = random.choice(search_ops)
+    if op:
+        adv = random.choice(search_op_advs)
+        op += adv
+    return op
+
+
 simple_entity_patterns = (
     "<{keyword}>",
 )
 
 entity_fields = (
+    "内容",
+    "文档",
+    "方面",
+    "方面的{self}",
     "演讲",
-    "的内容",
-    "的演讲",
-    "的知识",
+    "相关",
+    "相关的{self}",
     "知识",
-    "方面的",
-    "的讲座",
-    "的课程",
-    "的文档",
-    "的资料",
-    "的视频",
-    "相关的",
     "类",
+    "类的{self}",
+    "视频",
     "讲座",
     "课",
     "课程",
+    "资料",
+    "材料",
+    "素材",
 )
+
+des = ('的', '地', '')
+
+
+def get_a_entity_field():
+    return random.choice(des) + get_a_compose_segment(entity_fields)
+
+
+def get_a_compose_segment(segments):
+    acc = ""
+    while True:
+        if not acc:
+            acc = random.choice(segments)
+        if '{self}' in acc:
+            acc = acc.format(self=random.choice(segments))
+        else:
+            return acc
 
 
 def get_a_composed_entity_pattern():
     v = random.randint(0, 3)
     if v == 0:
-        return random.choice(abouts) + '<{keyword}>'
+        return get_a_about() + '<{keyword}>'
     if v == 1:
-        return "<{keyword}>" + random.choice(entity_fields)
+        return "<{keyword}>" + get_a_entity_field()
 
-    return random.choice(abouts) + '<{keyword}>' + random.choice(entity_fields)
+    return get_a_about() + '<{keyword}>' + get_a_entity_field()
 
 
 abouts = (
-    "介绍",
     "关于",
     "有关",
+    "有关于",
+    "介绍",
+    "介绍{self}",
     "讲述",
+    "讲述{self}",
     "叙述",
+    "叙述{self}",
     "课程",
 )
+
+
+def get_a_about():
+    return get_a_compose_segment(abouts)
 
 
 def get_a_entity_pattern():
@@ -142,11 +178,13 @@ tailers = (
     "",
     "?",
     "可以吗",
-    "可以吗",
+    "怎么样",
+    "可否",
     "吗",
     "好吗",
-    "好吗",
+    "好不",
     "行吗",
+    "行不",
 )
 
 puncts = ('', ',', '，', '.', '。', '!', '！', '?', '？')
@@ -195,7 +233,7 @@ def generate_sentence():
         w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
         h = random.choice(hellos)
         s = random.choice(seconds)
-        op = random.choice(search_ops)
+        op = get_a_search_op()
 
         if op:
             entity = get_a_entity_pattern()
