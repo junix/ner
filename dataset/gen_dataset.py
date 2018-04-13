@@ -153,9 +153,12 @@ _all_words = tuple(set(_read_words()))
 _all_words_and_puncts = _all_words + puncts
 
 
-def fake_sentence():
-    word_len = random.randint(0, 4)
-    return ''.join([random.choice(_all_words_and_puncts) for _ in range(word_len)])
+def fake_sentence(max_word_len=4, with_punct=True):
+    word_len = random.randint(0, max_word_len)
+    if with_punct:
+        return ''.join([random.choice(_all_words_and_puncts) for _ in range(word_len)])
+    else:
+        return ''.join([random.choice(_all_words) for _ in range(word_len)])
 
 
 def tagging(words):
@@ -172,7 +175,7 @@ def tagging(words):
 def generate_sentence():
     while True:
         ws = _all_words
-        w = random.choice(ws)
+        w = fake_sentence(max_word_len=3, with_punct=False)
         h = random.choice(hellos)
         s = random.choice(seconds)
         op = random.choice(search_ops)
