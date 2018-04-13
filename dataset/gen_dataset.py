@@ -1,4 +1,5 @@
 import os
+import re
 import jieba
 import random
 
@@ -45,6 +46,9 @@ composed_entity_patterns = (
     "<{keyword}>方面的",
     "<{keyword}>的讲座",
     "<{keyword}>的课程",
+    "<{keyword}>的文档",
+    "<{keyword}>的资料",
+    "<{keyword}>的视频",
     "<{keyword}>相关",
     "<{keyword}>相关的",
     "<{keyword}>类",
@@ -62,7 +66,6 @@ composed_entity_patterns = (
 )
 
 entity_patterns = simple_entity_patterns + composed_entity_patterns
-
 
 hellos = (
     "",
@@ -132,16 +135,27 @@ tailers = (
 puncts = ('', ',', '，', '.', '。', '!', '！', '?', '？')
 
 
-def read_keywords():
+def _read_words():
     with open(_new_hans_dict, 'r') as f:
         for line in f:
             try:
-                word, tag, *_ = line.split('\t')
+                # word, tag, *_ = line.split(' \t')
+                word, *_ = re.split('\s', line)
                 yield word
                 # if tag and tag[0] in ('n', 'i', 'v', 'g', 'l', 'd'):
                 #     yield word
-            except:
+            except Exception as e:
+                print(e)
                 pass
+
+
+_all_words = tuple(set(_read_words()))
+_all_words_and_puncts = _all_words + puncts
+
+
+def fake_sentence():
+    word_len = random.randint(0, 4)
+    return ''.join([random.choice(_all_words_and_puncts) for _ in range(word_len)])
 
 
 def tagging(words):
@@ -155,10 +169,9 @@ def tagging(words):
             yield w, next_mark
 
 
-def generate_dataset(size=20000000):
-    ws = list(read_keywords())
-    count = 0
-    while count < size:
+def generate_sentence():
+    while True:
+        ws = _all_words
         w = random.choice(ws)
         h = random.choice(hellos)
         s = random.choice(seconds)
@@ -177,13 +190,18 @@ def generate_dataset(size=20000000):
             t += random.choice(puncts)
 
         noise = ""
-        if (h or s) or search_ops and random.randint(0, 10) == 0:
-            noise = random.choice(ws)
+        if (h or s) or search_ops and random.randint(0, 20) == 0:
+            noise = fake_sentence()
+            if random.randint(0, 5) == 0:
+                noise += random.choice(puncts)
 
-        sentence = noise + h + s + op + entity.format(keyword=w) + t
+        yield noise + h + s + op + entity.format(keyword=w) + t
+
+
+def generate_dataset():
+    for sentence in generate_sentence():
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
         yield words, tags
-        count += 1
