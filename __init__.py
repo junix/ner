@@ -14,10 +14,9 @@ else:
 
 
 def create_app():
-
     app = Flask(__name__)
     configure_app(app)
-    # register_extensions(app)
+    register_extensions(app)
     register_blueprints(app)
     return app
 
@@ -38,5 +37,4 @@ def register_extensions(app):
 
 def register_blueprints(app):
     blueprint.url_prefix = DefaultSetting.FLASK_API_URL_PREFIX
-    print(blueprint.url_prefix)
     app.register_blueprint(blueprint)
