@@ -7,5 +7,5 @@ app = create_app()
 application = app
 
 if __name__ == '__main__':
-    get_entity("s")
+    # get_entity("s")
     app.run(debug=app.config['FLASK_DEBUG'], host='0.0.0.0', port=8888)

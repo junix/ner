@@ -173,6 +173,8 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
         model.change_context(use_gpu)
 
     def predict(sentence):
+        if not sentence:
+            return ''
         words = list(jieba.cut(sentence))
         input = transformer.transform(words)
         output = model[input]
