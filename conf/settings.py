@@ -33,5 +33,5 @@ class ProdSetting(DefaultSetting):
     """Production configuration."""
     FLASK_DEBUG = False  # Do not use debug mode in production
     FLASK_LOGGER = 'errorLogger'  # Logger
-    FLASK_API_URL_PREFIX = '/search_entity/v1/'  # URL Prefix
+    FLASK_API_URL_PREFIX = '/search_entity/v1'  # URL Prefix
 

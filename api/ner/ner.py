@@ -1,5 +1,6 @@
 from flask_restplus import Resource
 
+from api.ner.business import get_entity
 from api.ner.serializers import ner_result
 from api.restplus import api
 
@@ -15,5 +16,7 @@ class SearchEntityRecognizer(Resource):
         """
         查询搜索实体
         """
-        print('vv')
-        return {"entity": "string"}
+        if query_content is None:
+            return {"entity": ""}
+
+        return {"entity": get_entity(query_content)}

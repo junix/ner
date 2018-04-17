@@ -4,7 +4,6 @@ from flask_cors import *
 from api import blueprint
 from conf.settings import *
 
-
 if FLASK_ENV == 'prod':
     DefaultSetting = ProdSetting
     globals()['FLASK_DEBUG'] = False
@@ -36,5 +35,6 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    blueprint.url_prefix = DefaultSetting.FLASK_API_URL_PREFIX
-    app.register_blueprint(blueprint)
+    url_prefix = DefaultSetting.FLASK_API_URL_PREFIX
+    app.register_blueprint(blueprint, url_prefix=url_prefix)
+    # app.register_blueprint(blueprint)

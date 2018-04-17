@@ -11,6 +11,3 @@ def default_error_handler(e):
     log.exception(message)
     if not globals()['FLASK_DEBUG']:
         return {'message': message}, 500
-
-
-
