@@ -3,7 +3,7 @@
 import grpc
 import time
 from concurrent import futures
-from grpc_server import data_pb2, data_pb2_grpc
+from proto import data_pb2, data_pb2_grpc
 from word2vec import Word2Vec
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
