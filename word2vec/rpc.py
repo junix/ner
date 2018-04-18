@@ -1,3 +1,4 @@
+from grpc_server.client import get_word2vec
 from . import word2vec
 
 
@@ -8,17 +9,15 @@ class Word2Vec(word2vec.Word2Vec):
         super(Word2Vec, self).__init__()
 
     def _ensure_model_loaded(self):
-        import gensim
-        from conf import GENSIM_MODEL_PATH
-        if self._model is None:
-            self._model = gensim.models.Word2Vec.load(GENSIM_MODEL_PATH)
         self._detect_none_word_vec()
 
     def get_batch(self, items):
-        return [self.__getitem__(item) for item in items]
+        self._ensure_model_loaded()
+        return get_word2vec(items)
 
     def __repr__(self):
-        return "<gensim word2vec>"
+        return "<rpc word2vec>"
 
     def get_raw_word2vec(self, word):
-        return self._model.wv[word]
+        rep = get_word2vec([word])
+        return rep[0]

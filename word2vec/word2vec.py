@@ -24,6 +24,9 @@ class Word2Vec:
         except KeyError:
             return self._none_word_vec.copy()
 
+    def get_batch(self, items):
+        raise ValueError("not implemented")
+
     def _ensure_model_loaded(self):
         raise ValueError("not implemented")
 

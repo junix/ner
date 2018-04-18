@@ -1,0 +1,19 @@
+syntax = "proto3";
+package ner;
+
+service GetWord2Vec {
+  rpc DoGetWord2Vec(WordSeq) returns (Word2VecSeq){}
+}
+
+
+message WordSeq {
+  repeated string word_seq = 1;
+}
+
+message Word2Vec {
+  repeated float vec = 1;
+}
+
+message Word2VecSeq {
+  repeated Word2Vec vec_seq = 1;
+}
