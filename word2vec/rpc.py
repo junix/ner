@@ -1,6 +1,7 @@
 import grpc
 import random
 import numpy as np
+from error import NerError
 from proto import data_pb2, data_pb2_grpc
 from conf import word2vec_rpc_servers
 from .word2vec import Word2Vec as BaseWord2Vec
@@ -27,9 +28,9 @@ def get_word2vec(words):
             result = _rep_to_numpy(reply)
             _cached_client = c
             return result
-        except:
+        except grpc.RpcError:
             log.exception('rpc call error')
-    raise ValueError('server unavailable')
+    raise NerError('server unavailable')
 
 
 def _client_seq():
