@@ -6,7 +6,7 @@ from conf import word2vec_rpc_servers
 from .word2vec import Word2Vec as BaseWord2Vec
 from log import log
 
-_client = None
+_cached_client = None
 
 
 def _rep_to_numpy(response):
@@ -17,24 +17,24 @@ def _make_request(words):
     return data_pb2.WordSeq(word_seq=words)
 
 
-def get_word2vec(sentences):
-    global _client
+def get_word2vec(words):
+    global _cached_client
 
-    req = _make_request(sentences)
+    req = _make_request(words)
     for c in _client_seq():
         try:
-            response = c.DoGetWord2Vec(req)
-            result = _rep_to_numpy(response)
-            _client = c
+            reply = c.DoGetWord2Vec(req)
+            result = _rep_to_numpy(reply)
+            _cached_client = c
             return result
-        except Exception:
+        except:
             log.exception('rpc call error')
-    return None
+    raise ValueError('server unavailable')
 
 
 def _client_seq():
-    if _client is not None:
-        yield _client
+    if _cached_client is not None:
+        yield _cached_client
     servers = list(word2vec_rpc_servers)
     random.shuffle(servers)
     for host, port in servers:

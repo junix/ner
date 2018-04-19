@@ -7,6 +7,5 @@ WORD2VEC_RPC_SERVER_PORT = '9191'
 
 word2vec_rpc_servers = (
     ('localhost', 9191),
-    ('localhost', 9191),
-    ('localhost', 9191),
+    ('localhost', 9190),
 )
