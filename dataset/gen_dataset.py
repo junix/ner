@@ -8,22 +8,22 @@ _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 
 search_ops = (
     "",
-    "找",
+    "找{adv}",
     "找找",
     "找到",
     "找得到",
-    "搜",
+    "搜{adv}",
     "搜搜",
-    "搜寻",
-    "搜索",
+    "搜寻{adv}",
+    "搜索{adv}",
     "有",
     "有几个",
     "有多少",
     "有没有",
-    "查",
+    "查{adv}",
     "查查",
-    "查找",
-    "查询",
+    "查找{adv}",
+    "查询{adv}",
     "这里有",
     "哪里有",
     "这里有多少",
@@ -38,9 +38,9 @@ search_op_advs = (
 
 def get_a_search_op():
     op = random.choice(search_ops)
-    if op:
+    if op and '{adv}' in op:
         adv = random.choice(search_op_advs)
-        op += adv
+        op = op.format(adv=adv)
     return op
 
 
@@ -51,16 +51,12 @@ simple_entity_patterns = (
 entity_fields = (
     "内容",
     "文档",
+    "文章",
     "方面",
-    "方面的{self}",
     "演讲",
     "相关",
-    "相关{self}",
-    "相关的",
-    "相关的{self}",
     "知识",
     "类",
-    "类的{self}",
     "视频",
     "讲座",
     "课",
@@ -70,11 +66,28 @@ entity_fields = (
     "素材",
 )
 
-des = ('的', '地', '')
+complex_entity_fields = {
+    "方面",
+    "相关",
+    "类",
+}
+
+des = ('的', '', '')
 
 
 def get_a_entity_field():
-    return random.choice(des) + get_a_compose_segment(entity_fields)
+    field = random.choice(entity_fields)
+    if field in complex_entity_fields and random.randint(0, 1) == 0:
+        de = random.choice(des)
+        concrete_field = None
+        while concrete_field is None:
+            concrete_field = random.choice(entity_fields)
+            if concrete_field in complex_entity_fields:
+                concrete_field = None
+        field = field + de + concrete_field
+    if '的' in field:
+        return field
+    return random.choice(des) + field
 
 
 def get_a_compose_segment(segments):
