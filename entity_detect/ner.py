@@ -192,7 +192,7 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
         best = ''.join(phrase)
         if best:
             return best
-        return '[' + sentence + ']'
+        return sentence
 
     return predict
 
