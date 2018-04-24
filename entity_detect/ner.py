@@ -163,7 +163,7 @@ def train_and_dump(load_old=False, use_gpu=False):
         model = torch.load(_default_model_dump_file)
     else:
         # TODO:
-        model = EntityRecognizer(input_size=400)
+        model = EntityRecognizer(input_size=200)
     train(model, dataset, use_gpu=use_gpu)
 
 
