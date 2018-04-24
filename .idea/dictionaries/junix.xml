@@ -2,6 +2,7 @@
   <dictionary name="junix">
     <words>
       <w>advs</w>
+      <w>jieba</w>
       <w>punct</w>
       <w>puncts</w>
       <w>restplus</w>

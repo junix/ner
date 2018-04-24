@@ -1,6 +1,6 @@
 import os
 import re
-import jieba
+import jieba_dict
 import random
 
 _current_dir = os.path.dirname(__file__)
