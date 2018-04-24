@@ -11,12 +11,16 @@ from torch.autograd import Variable
 
 import dataset.transformer as transformer
 from dataset.gen_dataset import generate_dataset
+import os
+import jieba
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
     pwd=os.path.dirname(__file__), sep=os.path.sep)
 _default_transformer_dump_file = _model_dump_dir + os.path.sep + 'transformer.pickle'
 _default_model_dump_file = _model_dump_dir + os.path.sep + 'model.dump'
 
+_jieba_user_dict = os.path.dirname(__file__) + '/../data/jieba_user_dict.txt'
+jieba.load_userdict(_jieba_user_dict)
 
 class EntityRecognizer(nn.Module):
 
