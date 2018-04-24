@@ -8,45 +8,54 @@ _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 
 search_ops = (
     "",
-    "找{adv}",
-    "找找",
+    "{who}找{adv}",
+    "{who}找找",
     "找到",
     "找得到",
-    "搜{adv}",
-    "搜搜",
-    "搜寻{adv}",
-    "搜索{adv}",
+    "{who}搜{adv}",
+    "{who}搜搜",
+    "{who}搜寻{adv}",
+    "{who}搜索{adv}",
     "有",
     "有几个",
     "有多少",
     "有没有",
-    "查{adv}",
-    "查查",
-    "查找{adv}",
-    "查询{adv}",
+    "{who}查{adv}",
+    "{who}查查",
+    "{who}查找{adv}",
+    "{who}查询{adv}",
     "这里有",
     "哪里有",
-    "想看{adv}",
-    "想找{adv}",
-    "想听{adv}",
-    "看{adv}",
-    "找{adv}",
-    "听{adv}",
+    "{who}看{adv}",
+    "{who}找{adv}",
+    "{who}听{adv}",
     "这里有多少",
 )
 
+whos = (
+    '我要',
+    '我想',
+    '想',
+    '能',
+    '能不能',
+    '可否',
+    '可以',
+)
+
 search_op_advs = (
-    "",
-    "",
     "一下",
 )
 
 
 def get_a_search_op():
     op = random.choice(search_ops)
-    if op and '{adv}' in op:
-        adv = random.choice(search_op_advs)
-        op = op.format(adv=adv)
+    if op:
+        adv, who = '', ''
+        if random.randint(0, 10) < 2:
+            adv = random.choice(search_op_advs)
+        if random.randint(0, 10) < 3:
+            who = random.choice(whos)
+        op = op.format(adv=adv, who=who)
     return op
 
 
@@ -112,10 +121,10 @@ def get_a_compose_segment(segments):
 
 
 def get_a_composed_entity_pattern():
-    v = random.randint(0, 3)
-    if v == 0:
+    v = random.randint(0, 10)
+    if v <= 2:
         return get_a_about() + '<{keyword}>'
-    if v == 1:
+    if v <= 8:
         return "<{keyword}>" + get_a_entity_field()
 
     return get_a_about() + '<{keyword}>' + get_a_entity_field()
@@ -181,9 +190,9 @@ seconds = (
     "",
     "可不可以",
     "可否",
-    "帮我",
+    # "帮我",
     "是否",
-    "替我",
+    # "替我",
     "我",
     "知不知道",
     "能不能",
@@ -253,12 +262,21 @@ def tagging(words):
             yield w, next_mark
 
 
+def make_hello():
+    if random.randint(0, 10) <= 9:
+        return ""
+    h = random.choice(hellos)
+    if h and random.randint(0, 10) <= 5:
+        h += random.choice(puncts)
+    return h
+
+
 def generate_sentence():
     while True:
         ws = _all_words
         w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
-        h = random.choice(hellos)
-        s = random.choice(seconds)
+        h = make_hello()
+        # s = random.choice(seconds)
         op = get_a_search_op()
 
         if op:
@@ -268,18 +286,20 @@ def generate_sentence():
 
         t = random.choice(tailers)
 
-        if h:
-            h += random.choice(puncts)
-        if t:
-            t += random.choice(puncts)
+        # if h:
+        #     h += random.choice(puncts)
+        # if t:
+        #     t += random.choice(puncts)
 
         noise = ""
-        if (h or s) or search_ops and random.randint(0, 20) == 0:
-            noise = fake_sentence(max_word_cnt=4)
-            if random.randint(0, 5) == 0:
+        # if (h or s) or search_ops and random.randint(0, 20) == 0:
+        if search_ops and random.randint(0, 10) <= 4:
+            noise = fake_sentence(max_word_cnt=2)
+            if random.randint(0, 5) <= 1:
                 noise += random.choice(puncts)
 
-        yield noise + h + s + op + entity.format(keyword=w) + t
+        # yield noise + h + s + op + entity.format(keyword=w) + t
+        yield noise + h + op + entity.format(keyword=w) + t
 
 
 def generate_dataset():
@@ -289,3 +309,7 @@ def generate_dataset():
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
         yield words, tags
+
+
+def keyword_of(words, tags):
+    return ''.join([w for w, t in zip(words, tags) if t == 1])
