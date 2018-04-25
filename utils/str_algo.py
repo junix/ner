@@ -1,7 +1,6 @@
 import re
 from jieba.posseg import cut as pseg_cut
 from jieba import cut
-from utils.subspec import SubSpec
 
 NON_ASCII_PUNCTUATIONS = '\u2705✅．•·’丶《》—–－一¯§Ü▲◆◇※★☆♢▶☩▪＊❖Λ①②③④⑤⑥⑦⑧⑨²◎▼⊙■•●Ø⑴⑵⑶⑷㈡㈢°。､﹑、⃣'
 NON_ASCII_PUNCTUATIONS_SET = set(NON_ASCII_PUNCTUATIONS)
@@ -393,20 +392,6 @@ def read_lines_from(file):
             if line:
                 yield line
 
-
-ENG_HANS_SEPS_RULES = (
-    SubSpec(r'([A-Z])([\u4E00-\u9FFF])', '\g<1> \g<2>'),
-    SubSpec(r'([\u4E00-\u9FFF])([A-Z])', '\g<1> \g<2>'),
-)
-
-
-def sep_eng_hans_words(sentence):
-    """
-    将英文单词和中文单词之间添加一个空格
-    :param sentence:
-    :return:
-    """
-    return trim(sentence, ENG_HANS_SEPS_RULES)
 
 
 def contain_coo_punct(text):
