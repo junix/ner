@@ -11,34 +11,42 @@ jieba_dict.init_user_dict()
 
 search_ops = (
     "",
-    "{who}找{adv}",
-    "{who}找找",
+    "{please}找{adv}",
+    "{please}找找",
     "找到",
     "找得到",
-    "{who}搜{adv}",
-    "{who}搜搜",
-    "{who}搜寻{adv}",
-    "{who}搜索{adv}",
+    "{please}找一找",
+    "{please}搜{adv}",
+    "{please}搜搜",
+    "{please}搜一搜",
+    "{please}搜寻{adv}",
+    "{please}搜索{adv}",
     "有",
+    "有没有",
     "有几个",
     "有多少",
     "有没有",
-    "{who}查{adv}",
-    "{who}查查",
-    "{who}查找{adv}",
-    "{who}查询{adv}",
+    "有那些",
+    "{please}查{adv}",
+    "{please}查一查",
+    "{please}查查",
+    "{please}查找{adv}",
+    "{please}查询{adv}",
+    "{please}询找{adv}",
     "这里有",
     "哪里有",
-    "{who}看{adv}",
-    "{who}找{adv}",
-    "{who}听{adv}",
-    "这里有多少",
+    "{please}看{adv}",
+    "{please}听{adv}",
 )
 
-whos = (
+pleases = (
     '我要',
     '我想',
+    '帮我', '替我', '给我',
     '想',
+    '请',
+    '请你',
+    '麻烦你',
     '能',
     '能不能',
     '可否',
@@ -54,12 +62,12 @@ search_op_advs = (
 def get_a_search_op():
     op = random.choice(search_ops)
     if op:
-        adv, who = '', ''
+        adv, please = '', ''
         if random.randint(0, 10) < 2:
             adv = random.choice(search_op_advs)
         if random.randint(0, 10) < 3:
-            who = random.choice(whos)
-        op = op.format(adv=adv, who=who)
+            please = random.choice(pleases)
+        op = op.format(adv=adv, please=please)
     return op
 
 
