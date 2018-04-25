@@ -17,6 +17,8 @@ _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
 _default_transformer_dump_file = _model_dump_dir + os.path.sep + 'transformer.pickle'
 _default_model_dump_file = _model_dump_dir + os.path.sep + 'model.dump'
 
+jieba_dict.init_user_dict()
+
 
 class EntityRecognizer(nn.Module):
 

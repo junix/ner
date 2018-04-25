@@ -1,5 +1,9 @@
 import os
 import jieba
 
-_jieba_user_dict = os.path.dirname(__file__) + '/dict.dat'
-jieba.load_userdict(_jieba_user_dict)
+JIEBA_USER_DICT = os.path.dirname(__file__) + '/dict.dat'
+jieba.load_userdict(JIEBA_USER_DICT)
+
+
+def init_user_dict():
+    pass

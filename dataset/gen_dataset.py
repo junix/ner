@@ -1,10 +1,13 @@
 import os
 import re
 import jieba_dict
+import jieba
 import random
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
+
+jieba_dict.init_user_dict()
 
 search_ops = (
     "",
@@ -40,6 +43,7 @@ whos = (
     '能不能',
     '可否',
     '可以',
+    '可不可以',
 )
 
 search_op_advs = (
@@ -226,7 +230,8 @@ puncts = ('', ',', '，', '.', '。', '!', '！', '?', '？')
 
 
 def _read_words():
-    with open(_new_hans_dict, 'r') as f:
+    # with open(_new_hans_dict, 'r') as f:
+    with open(jieba_dict.JIEBA_USER_DICT, 'r') as f:
         for line in f:
             try:
                 # word, ner, *_ = line.split(' \t')
