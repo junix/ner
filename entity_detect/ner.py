@@ -1,6 +1,7 @@
 import os
 
 import jieba
+import re
 import jieba_dict
 import numpy as np
 import torch
@@ -10,7 +11,7 @@ import torch.optim as optim
 from torch.autograd import Variable
 
 import dataset.transformer as transformer
-from dataset.gen_dataset import generate_dataset
+from dataset.gen_dataset import generate_dataset,puncts
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
     pwd=os.path.dirname(__file__), sep=os.path.sep)
@@ -174,26 +175,31 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
         model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
         model.change_context(use_gpu)
 
-    def predict(sentence):
-        if not sentence:
-            return ''
-        words = list(jieba.cut(sentence))
+    def get_tags(text):
+        words = list(jieba.cut(text))
         input = transformer.transform(words)
         output = model[input]
         tags = output.data.numpy().argmax(axis=1)
-        if not output_keyword:
-            return tags
+        return words, tags
 
-        phrase = []
-        for word, tag in zip(words, tags):
-            if tag == 1:
-                phrase.append(word)
-            else:
-                if phrase:
-                    return ''.join(phrase)
-        best = ''.join(phrase)
-        if best:
-            return best
+    def predict(sentence):
+        if not sentence:
+            return '' if output_keyword else []
+        if not output_keyword:
+            return get_tags(sentence)[1]
+        sub_sentences = re.split('[,，.。!！?？]', sentence)
+        for sub_sentence in sub_sentences:
+            words, tags = get_tags(sub_sentence)
+            phrase = []
+            for word, tag in zip(words, tags):
+                if tag == 1:
+                    phrase.append(word)
+                else:
+                    if phrase:
+                        return ''.join(phrase)
+            best = ''.join(phrase)
+            if best:
+                return best
         return sentence
 
     return predict
