@@ -3,6 +3,7 @@ import re
 import jieba_dict
 import jieba
 import random
+from utils.str_algo import regularize_punct
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
@@ -234,7 +235,7 @@ tailers = (
     "行不",
 )
 
-puncts = ('', ',', '，', '.', '。', '!', '！', '?', '？')
+puncts = ('', ',', '.', '!', '?')
 
 
 def _read_words():
@@ -312,7 +313,9 @@ def generate_sentence():
                 noise += random.choice(puncts)
 
         # yield noise + h + s + op + entity.format(keyword=w) + t
-        yield noise + h + op + entity.format(keyword=w) + t
+        sentence = noise + h + op + entity.format(keyword=w) + t
+        sentence = regularize_punct(sentence)
+        yield sentence
 
 
 def generate_dataset():

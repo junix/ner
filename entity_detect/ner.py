@@ -9,9 +9,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.autograd import Variable
+from utils.str_algo import regularize_punct
 
 import dataset.transformer as transformer
-from dataset.gen_dataset import generate_dataset,puncts
+from dataset.gen_dataset import generate_dataset, puncts
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
     pwd=os.path.dirname(__file__), sep=os.path.sep)
@@ -183,11 +184,12 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
         return words, tags
 
     def predict(sentence):
+        sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []
         if not output_keyword:
             return get_tags(sentence)[1]
-        sub_sentences = re.split('[,，.。!！?？]', sentence)
+        sub_sentences = re.split('[,.!?]', sentence)
         for sub_sentence in sub_sentences:
             words, tags = get_tags(sub_sentence)
             phrase = []
@@ -203,4 +205,3 @@ def load_predict(model=None, use_gpu=False, output_keyword=False):
         return sentence
 
     return predict
-
