@@ -211,15 +211,11 @@ puncts = ('', ',', '.', '!', '?')
 
 
 def _read_words():
-    # with open(_new_hans_dict, 'r') as f:
     with open(jieba_dict.JIEBA_USER_DICT, 'r') as f:
         for line in f:
             try:
-                # word, ner, *_ = line.split(' \t')
                 word, *_ = re.split('\s', line)
                 yield word
-                # if ner and ner[0] in ('n', 'i', 'v', 'g', 'l', 'd'):
-                #     yield word
             except Exception as e:
                 print(e)
                 pass
@@ -294,7 +290,6 @@ def generate_sentence():
         ws = _all_words
         w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
         h = make_hello()
-        # s = random.choice(seconds)
         op = get_a_search_op()
 
         if op:
@@ -304,19 +299,12 @@ def generate_sentence():
 
         t = random.choice(tailers)
 
-        # if h:
-        #     h += random.choice(puncts)
-        # if t:
-        #     t += random.choice(puncts)
-
         noise = ""
-        # if (h or s) or search_ops and random.randint(0, 20) == 0:
         if search_ops and random.randint(0, 10) <= 4:
             noise = fake_sentence(max_word_cnt=2)
             if random.randint(0, 5) <= 1:
                 noise += random.choice(puncts)
 
-        # yield noise + h + s + op + entity.format(keyword=w) + t
         sentence = noise + h + op + entity.format(keyword=w) + t
         sentence = regularize_punct(sentence)
         yield sentence

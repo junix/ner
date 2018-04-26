@@ -167,6 +167,16 @@ def detect_input_shape(dataset):
     raise ValueError('empty dataset')
 
 
+def fetch_tags(model, text):
+    words = list(jieba.cut(text))
+    sentence = transformer.transform(words)
+    output = model[sentence]
+    output.detach_()
+    # tags = output.detach().cpu().numpy().argmax(axis=1)
+    _, tags = output.max(dim=1)
+    return words, tags.tolist()
+
+
 def load_predict(model=None, output_keyword=False):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if model is None:
@@ -174,24 +184,16 @@ def load_predict(model=None, output_keyword=False):
         model.eval()
         model.change_context(device)
 
-    def get_tags(text):
-        words = list(jieba.cut(text))
-        sentence = transformer.transform(words)
-        output = model[sentence]
-        output.detach_()
-        # tags = output.detach().cpu().numpy().argmax(axis=1)
-        _, tags = output.max(dim=1)
-        return words, tags.tolist()
-
     def predict(sentence):
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []
         if not output_keyword:
-            return get_tags(sentence)[1]
+            _words, tags = fetch_tags(model, sentence)
+            return tags
         sub_sentences = re.split('[,.!?]', sentence)
         for sub_sentence in sub_sentences:
-            words, tags = get_tags(sub_sentence)
+            words, tags = fetch_tags(model, sub_sentence)
             keywords = select_keywords(words, tags)
             if keywords:
                 return keywords
