@@ -192,16 +192,20 @@ def load_predict(model=None, output_keyword=False):
         sub_sentences = re.split('[,.!?]', sentence)
         for sub_sentence in sub_sentences:
             words, tags = get_tags(sub_sentence)
-            phrase = []
-            for word, tag in zip(words, tags):
-                if tag == 1:
-                    phrase.append(word)
-                else:
-                    if phrase:
-                        return ''.join(phrase)
-            best = ''.join(phrase)
-            if best:
-                return best
+            keywords = select_keywords(words, tags)
+            if keywords:
+                return keywords
         return sentence
 
     return predict
+
+
+def select_keywords(words, tags):
+    keywords, prev_tag = [], 0
+    for word, tag in zip(words, tags):
+        if tag == 1:
+            if prev_tag != 1 and keywords:
+                keywords.append(' ')
+            keywords.append(word)
+        prev_tag = tag
+    return ''.join(keywords)
