@@ -170,6 +170,7 @@ def load_predict(model=None, output_keyword=False):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if model is None:
         model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
+        model.eval()
         model.change_context(device)
 
     def get_tags(text):
