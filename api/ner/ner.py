@@ -18,9 +18,10 @@ class SearchEntityRecognizer(Resource):
         查询搜索实体
         """
         if query_content is None:
-            return {"entity": ""}
+            return {"entity": "", 'category': ''}
 
-        return {"entity": get_entity(query_content)}
+        cate, entity = get_entity(query_content)
+        return {"entity": entity, 'category': cate}
 
 
 @ns.route('/')
