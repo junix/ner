@@ -23,7 +23,7 @@ jieba_dict.init_user_dict()
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, device, input_size=-1, num_layers=1, hidden_size=256):
+    def __init__(self, device, input_size=-1, num_layers=2, hidden_size=256):
         super(EntityRecognizer, self).__init__()
         self.device = device
         self.hidden_size = hidden_size
