@@ -2,10 +2,14 @@
   <dictionary name="junix">
     <words>
       <w>advs</w>
+      <w>cors</w>
+      <w>grpcio</w>
       <w>jieba</w>
+      <w>protobuf</w>
       <w>punct</w>
       <w>puncts</w>
       <w>restplus</w>
+      <w>sklearn</w>
     </words>
   </dictionary>
 </component>

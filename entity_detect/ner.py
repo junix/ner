@@ -8,7 +8,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.autograd import Variable
 from utils.str_algo import regularize_punct
 
 import dataset.transformer as transformer
@@ -24,9 +23,9 @@ jieba_dict.init_user_dict()
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, input_size=-1, num_layers=1, hidden_size=256):
+    def __init__(self, device, input_size=-1, num_layers=1, hidden_size=256):
         super(EntityRecognizer, self).__init__()
-        self.use_gpu = False
+        self.device = device
         self.hidden_size = hidden_size
         self.input_size = input_size
         self.num_layers = num_layers
@@ -37,26 +36,20 @@ class EntityRecognizer(nn.Module):
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
         self.hidden2tag = nn.Linear(hidden_size, out_features=2)
         self.hidden = self.init_hidden()
+        self.change_context(device)
 
-    def in_cpu_context(self):
-        self.use_gpu = False
-        self.cpu()
-
-    def in_cuda_context(self):
-        self.use_gpu = True
-        self.cuda()
-
-    def change_context(self, use_gpu):
-        if use_gpu:
-            self.in_cuda_context()
+    def change_context(self, device):
+        self.device = device
+        if self.device.type == 'cpu':
+            self.cpu()
         else:
-            self.in_cpu_context()
+            self.cuda()
 
     def init_hidden(self):
         # return to_var(torch.zeros(self.num_layers, 1, self.hidden_size), self.use_gpu)
         return (
-            to_var(torch.zeros(self.num_layers, 1, self.hidden_size), self.use_gpu),
-            to_var(torch.zeros(self.num_layers, 1, self.hidden_size), self.use_gpu),
+            torch.zeros(self.num_layers, 1, self.hidden_size, device=self.device),
+            torch.zeros(self.num_layers, 1, self.hidden_size, device=self.device)
         )
 
     def __getitem__(self, words_seq):
@@ -64,7 +57,7 @@ class EntityRecognizer(nn.Module):
         return self.forward(words_seq)
 
     def forward(self, words):
-        words = to_var(words, self.use_gpu)
+        words = to_tensor(words, self.device)
         word_len = len(words)
         words = words.view(word_len, 1, -1)
         lstm_out, self.hidden = self.rnn(words, self.hidden)
@@ -76,30 +69,24 @@ class EntityRecognizer(nn.Module):
         torch.save(self, file)
 
 
-def to_var(val, use_gpu=False):
-    def _as_var():
-        if isinstance(val, torch.autograd.variable.Variable):
-            return val
-        if isinstance(val, np.ndarray):
-            tensor = torch.from_numpy(val.astype(np.float32))
-            return Variable(tensor.float())
-        if isinstance(val, (float, np.float32, np.float64, np.float16)):
-            return Variable(torch.FloatTensor([float(val)]))
-        if isinstance(val, (torch.FloatTensor, torch.DoubleTensor)):
-            return Variable(val)
-        raise TypeError("{elem} is not ndarray".format(elem=val))
+def to_tensor(val, device):
+    if isinstance(val, torch.Tensor):
+        return val.to(device)
+    if isinstance(val, np.ndarray):
+        tensor = torch.from_numpy(val.astype(np.float32))
+        return tensor.to(device)
+    if isinstance(val, (float, np.float32, np.float64, np.float16)):
+        tensor = torch.FloatTensor([float(val)])
+        return tensor.to(device)
 
-    if use_gpu:
-        return _as_var().cuda()
-    else:
-        return _as_var().cpu()
+    raise TypeError("Fail to convert {elem} to tensor".format(elem=val))
 
 
-def train(model, dataset, use_gpu):
+def train(model, dataset):
     optimizer = optim.SGD(model.parameters(), lr=0.1)
     loss_function = nn.NLLLoss()
 
-    model.change_context(use_gpu)
+    # model.change_device(device)
     # See what the scores are before training
     # Note that element i,j of the output is the score for ner j for word i.
 
@@ -121,8 +108,8 @@ def train(model, dataset, use_gpu):
     count = 1
     for epoch in range(60):  # again, normally you would NOT do 300 epochs, it is toy data
         for sentence, target in training_dataset:
-            sentence = to_var(sentence, use_gpu)
-            target = to_var(target, use_gpu).long()
+            sentence = to_tensor(sentence, model.device)
+            target = to_tensor(target, model.device).long()
             # Step 1. Remember that Pytorch accumulates gradients.
             # We need to clear them out before each instance
             model.zero_grad()
@@ -161,20 +148,27 @@ def load_dataset():
         yield transformer.transform(xs), np.array(y_true)
 
 
-def train_and_dump(load_old=False, use_gpu=False):
+def train_and_dump(load_old=False):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = load_dataset()
     if load_old:
         model = torch.load(_default_model_dump_file)
     else:
-        # TODO:
-        model = EntityRecognizer(input_size=200)
-    train(model, dataset, use_gpu=use_gpu)
+        model = EntityRecognizer(device=device, input_size=detect_input_shape(dataset))
+    train(model, dataset)
 
 
-def load_predict(model=None, use_gpu=False, output_keyword=False):
+def detect_input_shape(dataset):
+    for x, _ in dataset:
+        return x.shape[-1]
+    raise ValueError('empty dataset')
+
+
+def load_predict(model=None, output_keyword=False):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if model is None:
         model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
-        model.change_context(use_gpu)
+        model.change_context(device)
 
     def get_tags(text):
         words = list(jieba.cut(text))
