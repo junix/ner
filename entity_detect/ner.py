@@ -177,8 +177,9 @@ def load_predict(model=None, output_keyword=False):
         words = list(jieba.cut(text))
         input = transformer.transform(words)
         output = model[input]
-        tags = output.detach().cpu().numpy().argmax(axis=1)
-        return words, tags
+        # tags = output.detach().cpu().numpy().argmax(axis=1)
+        _, tags = output.max(dim=1)
+        return words, tags.tolist()
 
     def predict(sentence):
         sentence = regularize_punct(sentence)
