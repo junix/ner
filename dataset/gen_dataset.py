@@ -79,49 +79,49 @@ simple_entity_patterns = (
 )
 
 prepend_entity_fields = (
-    "<文档>",
-    "<文章>",
-    "<演讲>",
-    "<讲话>",
-    "知识",
-    "<视频>",
-    "<讲座>",
-    "课",
-    "<课程>",
-    "<资料>",
-    "<材料>",
-    "<电影>",
-    "<书籍>",
-    "商品",
-    "素材",
+    '[文档]',
+    '[文章]',
+    '[演讲]',
+    '[讲话]',
+    '[知识]',
+    '[视频]',
+    '[讲座]',
+    '[课]',
+    '[课程]',
+    '[资料]',
+    '[材料]',
+    '[电影]',
+    '[书籍]',
+    '[商品]',
+    '[素材]',
 )
 
 entity_fields = (
-    "内容",
-    "<文档>",
-    "文章",
-    "方面",
-    "<演讲>",
-    "<讲话>",
-    "相关",
-    "知识",
-    "类",
-    "<视频>",
-    "<讲座>",
-    "课",
-    "<课程>",
-    "<资料>",
-    "材料",
-    "<电影>",
-    "<书籍>",
-    "商品",
-    "素材",
+    '内容',
+    '[文档]',
+    '[文章]',
+    '方面',
+    '[演讲]',
+    '[讲话]',
+    '相关',
+    '[知识]',
+    '类',
+    '[视频]',
+    '[讲座]',
+    '课',
+    '[课程]',
+    '[资料]',
+    '[材料]',
+    '[电影]',
+    '[书籍]',
+    '商品',
+    '素材',
 )
 
 complex_entity_fields = {
-    "方面",
-    "相关",
-    "类",
+    '方面',
+    '相关',
+    '类',
 }
 
 des = ('的', '', '')
@@ -142,38 +142,27 @@ def get_a_entity_field():
     return random.choice(des) + field
 
 
-def get_a_compose_segment(segments):
-    acc = ""
-    while True:
-        if not acc:
-            acc = random.choice(segments)
-        if '{self}' in acc:
-            acc = acc.format(self=random.choice(segments))
-        else:
-            return acc
-
-
 def get_a_composed_entity_pattern():
     v = random.randint(0, 100)
     if v <= 25:
         return get_a_about() + '<{keyword}>'
     if v <= 50:
-        return random.choice(prepend_entity_fields) + "<{keyword}>"
+        return random.choice(prepend_entity_fields) + '<{keyword}>'
     if v <= 75:
-        return "<{keyword}>" + get_a_entity_field()
+        return '<{keyword}>' + get_a_entity_field()
     return get_a_about() + '<{keyword}>' + get_a_entity_field()
 
 
 abouts = (
-    "关于",
-    "有关",
-    "有关于",
+    '关于',
+    '有关',
+    '有关于',
 )
 
 intros = (
-    "介绍",
-    "讲述",
-    "叙述",
+    '介绍',
+    '讲述',
+    '叙述',
 )
 
 
@@ -195,18 +184,18 @@ def get_a_entity_pattern():
 
 
 tailers = (
-    "",
-    "",
-    "",
-    "?",
-    "可以吗",
-    "怎么样",
-    "可否",
-    "吗",
-    "好吗",
-    "好不",
-    "行吗",
-    "行不",
+    '',
+    '',
+    '',
+    '?',
+    '可以吗',
+    '怎么样',
+    '可否',
+    '吗',
+    '好吗',
+    '好不',
+    '行吗',
+    '行不',
 )
 
 puncts = ('', ',', '.', '!', '?')
@@ -240,41 +229,43 @@ def tagging(words):
     for w in words:
         if w == '<':
             next_mark = 1
-        elif w == '>':
+        elif w == '[':
+            next_mark = 2
+        elif w in ('>', ']'):
             next_mark = 0
         else:
             yield w, next_mark
 
 
 hellos = (
-    "",
-    "hi",
-    "hello",
-    "不知道",
-    "你",
-    "亲",
-    "你们",
-    "你们这里",
-    "这里",
-    "哪里",
-    "你好",
-    "喂",
-    "喔",
-    "嗨",
-    "哈啰",
-    "我说",
-    "敢问",
-    "请",
-    "请你",
-    "请问",
-    "烦请",
-    "问一下",
-    "麻烦",
-    "麻烦一下",
-    "麻烦你",
-    "麻烦问一下",
-    "你好小乐",
-    "小乐",
+    '',
+    'hi',
+    'hello',
+    '不知道',
+    '你',
+    '亲',
+    '你们',
+    '你们这里',
+    '这里',
+    '哪里',
+    '你好',
+    '喂',
+    '喔',
+    '嗨',
+    '哈啰',
+    '我说',
+    '敢问',
+    '请',
+    '请你',
+    '请问',
+    '烦请',
+    '问一下',
+    '麻烦',
+    '麻烦一下',
+    '麻烦你',
+    '麻烦问一下',
+    '你好小乐',
+    '小乐',
 )
 
 
@@ -330,4 +321,6 @@ def load_dataset():
 
 
 def keyword_of(words, tags):
-    return ''.join([w for w, t in zip(words, tags) if t == 1])
+    keyword = ''.join([w for w, t in zip(words, tags) if t == 1])
+    category = ''.join([w for w, t in zip(words, tags) if t == 2])
+    return category, keyword

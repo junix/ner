@@ -186,22 +186,34 @@ def load_predict(model=None, output_keyword=False):
             _words, tags = fetch_tags(model, sentence)
             return tags
         sub_sentences = re.split('[,.!?]', sentence)
+        old_category, old_keywords = '', ''
         for sub_sentence in sub_sentences:
             words, tags = fetch_tags(model, sub_sentence)
-            keywords = select_keywords(words, tags)
-            if keywords:
-                return keywords
-        return sentence
+            category, keywords = select_keywords(words, tags)
+            if category and keywords:
+                return category, keywords
+            if not old_category and category:
+                old_category = category
+            if not old_keywords and keywords:
+                old_keywords = keywords
+            if old_category and old_keywords:
+                return old_category, old_keywords
+
+        return '', sentence
 
     return predict
 
 
 def select_keywords(words, tags):
-    keywords, prev_tag = [], 0
+    keywords, category, prev_tag = [], [], 0
     for word, tag in zip(words, tags):
         if tag == 1:
             if prev_tag != 1 and keywords:
                 keywords.append(' ')
             keywords.append(word)
+        elif tag == 2:
+            if prev_tag != 2 and category:
+                category.append(' ')
+            category.append(word)
         prev_tag = tag
-    return ''.join(keywords)
+    return ''.join(category), ''.join(keywords)
