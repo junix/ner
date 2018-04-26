@@ -32,6 +32,9 @@ class BatchSearchEntityRecognizer(Resource):
         """
         查询搜索实体
         """
-        queries = [item['query'] for item in request.json]
-        reps = [{'entity': get_entity(q)} for q in queries]
+        reps = []
+        for item in request.json:
+            query = item['query']
+            cate, entity = get_entity(query)
+            reps.append({'category': cate if cate else None, 'entity': entity})
         return reps, 201
