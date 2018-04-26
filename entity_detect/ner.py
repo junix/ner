@@ -153,7 +153,7 @@ def load_dataset():
 def train_and_dump(load_old=False):
     import word2vec
     # use local gensim to accelerate training
-    word2vec.wv = word2vec.gensims.Word2Vec()
+    word2vec.switch_to_local_gensim()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = load_dataset()
     if load_old:
