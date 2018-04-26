@@ -76,6 +76,24 @@ simple_entity_patterns = (
     "<{keyword}>",
 )
 
+prepend_entity_fields = (
+    "<文档>",
+    "<文章>",
+    "<演讲>",
+    "<讲话>",
+    "知识",
+    "<视频>",
+    "<讲座>",
+    "课",
+    "<课程>",
+    "<资料>",
+    "<材料>",
+    "<电影>",
+    "<书籍>",
+    "商品",
+    "素材",
+)
+
 entity_fields = (
     "内容",
     "<文档>",
@@ -97,6 +115,7 @@ entity_fields = (
     "商品",
     "素材",
 )
+
 
 complex_entity_fields = {
     "方面",
@@ -134,12 +153,13 @@ def get_a_compose_segment(segments):
 
 
 def get_a_composed_entity_pattern():
-    v = random.randint(0, 10)
-    if v <= 2:
+    v = random.randint(0, 100)
+    if v <= 25:
         return get_a_about() + '<{keyword}>'
-    if v <= 8:
+    if v <= 50:
+        return random.choice(prepend_entity_fields) + "<{keyword}>"
+    if v <= 75:
         return "<{keyword}>" + get_a_entity_field()
-
     return get_a_about() + '<{keyword}>' + get_a_entity_field()
 
 
@@ -147,78 +167,31 @@ abouts = (
     "关于",
     "有关",
     "有关于",
+)
+
+intros = (
     "介绍",
-    "介绍{self}",
     "讲述",
-    "讲述{self}",
     "叙述",
-    "叙述{self}",
-    "课程",
 )
 
 
 def get_a_about():
-    return get_a_compose_segment(abouts)
+    rnd = random.randint(0, 100)
+    if rnd < 33:
+        return random.choice(abouts)
+    if rnd < 66:
+        return random.choice(intros)
+    else:
+        return random.choice(intros) + random.choice(abouts)
 
 
 def get_a_entity_pattern():
-    if random.randint(0, 3) <= 0:
+    rnd = random.randint(0, 100)
+    if rnd <= 20:
         return random.choice(simple_entity_patterns)
     return get_a_composed_entity_pattern()
 
-
-hellos = (
-    "",
-    "hi",
-    "hello",
-    "不知道",
-    "你",
-    "亲",
-    "你们",
-    "你们这里",
-    "这里",
-    "哪里",
-    "你好",
-    "喂",
-    "喔",
-    "嗨",
-    "哈啰",
-    "我说",
-    "敢问",
-    "请",
-    "请你",
-    "请问",
-    "烦请",
-    "问一下",
-    "麻烦",
-    "麻烦一下",
-    "麻烦你",
-    "麻烦问一下",
-    "你好小乐",
-    "小乐",
-)
-
-seconds = (
-    "",
-    "",
-    "可不可以",
-    "可否",
-    # "帮我",
-    "是否",
-    # "替我",
-    "我",
-    "知不知道",
-    "能不能",
-    "能否",
-    "怎么",
-    "怎样",
-    "有没有办法",
-    "才能",
-    "请",
-    "请你",
-    "这里",
-    "什么地方能",
-)
 
 tailers = (
     "",
