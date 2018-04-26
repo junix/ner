@@ -66,7 +66,10 @@ class EntityRecognizer(nn.Module):
         return tag_scores
 
     def save(self, file):
+        device = self.device
+        self.device = None
         torch.save(self, file)
+        self.device = device
 
 
 def to_tensor(val, device):
