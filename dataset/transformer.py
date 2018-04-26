@@ -1,11 +1,10 @@
 import numpy as np
-# import time
-
 from word2vec import wv
 
 
-def transform(words):
-    # beg = time.time()
-    vecs = wv.get_batch(words)
-    # print(len(words), '->', time.time() - beg)
+def transform(words, embed=None):
+    if embed:
+        vecs = embed.get_batch(words)
+    else:
+        vecs = wv.get_batch(words)
     return np.array(vecs)

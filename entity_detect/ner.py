@@ -10,7 +10,7 @@ import torch.optim as optim
 
 import dataset.transformer as transformer
 import jieba_dict
-from dataset.gen_dataset import generate_dataset
+from dataset.gen_dataset import load_dataset
 from utils.str_algo import regularize_punct
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
@@ -144,16 +144,7 @@ def train(model, dataset):
     return model
 
 
-def load_dataset():
-    dataset = generate_dataset()
-    for xs, y_true in dataset:
-        yield transformer.transform(xs), np.array(y_true)
-
-
 def train_and_dump(load_old=False):
-    import word2vec
-    # use local gensim to accelerate training
-    word2vec.switch_to_local_gensim()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = load_dataset()
     if load_old:

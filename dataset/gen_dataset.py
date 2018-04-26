@@ -1,9 +1,11 @@
 import os
 import re
+import numpy as np
 import jieba_dict
 import jieba
 import random
 from utils.str_algo import regularize_punct
+from .transformer import transform
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
@@ -317,6 +319,14 @@ def generate_dataset():
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
         yield words, tags
+
+
+def load_dataset():
+    from word2vec.gensims import Word2Vec
+    embed = Word2Vec()
+    dataset = generate_dataset()
+    for xs, y_true in dataset:
+        yield transform(xs, embed=embed), np.array(y_true)
 
 
 def keyword_of(words, tags):
