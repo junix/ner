@@ -33,7 +33,7 @@ class EntityRecognizer(nn.Module):
         # self.bn = nn.BatchNorm1d(hidden_size)
         # self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size)
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
-        self.hidden2tag = nn.Linear(hidden_size, out_features=2)
+        self.hidden2tag = nn.Linear(hidden_size, out_features=3)
         self.hidden = self.init_hidden()
         self.change_context(device)
 
