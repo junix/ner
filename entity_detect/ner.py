@@ -155,6 +155,7 @@ def train_and_dump(load_old=False):
     dataset = load_dataset()
     if load_old:
         model = torch.load(_default_model_dump_file)
+        model.change_context(device)
     else:
         model = EntityRecognizer(device=device, input_size=detect_input_shape(dataset))
     train(model, dataset)
