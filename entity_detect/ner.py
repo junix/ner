@@ -1,21 +1,20 @@
 import os
+import re
 
 import jieba
-import re
-import jieba_dict
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from utils.str_algo import regularize_punct
 
 import dataset.transformer as transformer
-from dataset.gen_dataset import generate_dataset, puncts
+import jieba_dict
+from dataset.gen_dataset import generate_dataset
+from utils.str_algo import regularize_punct
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
     pwd=os.path.dirname(__file__), sep=os.path.sep)
-_default_transformer_dump_file = _model_dump_dir + os.path.sep + 'transformer.pickle'
 _default_model_dump_file = _model_dump_dir + os.path.sep + 'model.dump'
 
 jieba_dict.init_user_dict()
@@ -85,6 +84,7 @@ def to_tensor(val, device):
 
 
 def train(model, dataset):
+    model.train()
     optimizer = optim.SGD(model.parameters(), lr=0.1)
     loss_function = nn.NLLLoss()
 
@@ -176,8 +176,9 @@ def load_predict(model=None, output_keyword=False):
 
     def get_tags(text):
         words = list(jieba.cut(text))
-        input = transformer.transform(words)
-        output = model[input]
+        sentence = transformer.transform(words)
+        output = model[sentence]
+        output.detach_()
         # tags = output.detach().cpu().numpy().argmax(axis=1)
         _, tags = output.max(dim=1)
         return words, tags.tolist()
