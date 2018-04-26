@@ -176,7 +176,7 @@ def load_predict(model=None, output_keyword=False):
         words = list(jieba.cut(text))
         input = transformer.transform(words)
         output = model[input]
-        tags = output.numpy().argmax(axis=1)
+        tags = output.detach().cpu().numpy().argmax(axis=1)
         return words, tags
 
     def predict(sentence):
