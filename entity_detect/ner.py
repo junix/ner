@@ -196,10 +196,10 @@ def load_predict(model=None, output_keyword=False):
                 old_category = category
             if not old_keywords and keywords:
                 old_keywords = keywords
-            if old_category and old_keywords:
-                return old_category, old_keywords
 
-        return '', sentence
+        if not old_keywords:
+            old_keywords = sentence
+        return old_category, old_keywords
 
     return predict
 
