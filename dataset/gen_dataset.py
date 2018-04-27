@@ -13,7 +13,6 @@ _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 jieba_dict.init_user_dict()
 
 search_ops = (
-    '', '', '', '',
     '{please}找{adv}',
     '{please}找找',
     '找到',
@@ -63,12 +62,14 @@ search_op_advs = (
 
 
 def get_a_search_op():
+    if random.randint(0, 10) <= 4:
+        return ''
     op = random.choice(search_ops)
     if op:
         adv, please = '', ''
         if random.randint(0, 10) < 2:
             adv = random.choice(search_op_advs)
-        if random.randint(0, 10) < 3:
+        if random.randint(0, 10) < 1:
             please = random.choice(pleases)
         op = op.format(adv=adv, please=please)
     return op
