@@ -13,7 +13,7 @@ _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 jieba_dict.init_user_dict()
 
 search_ops = (
-    "",
+    "", "", "", "",
     "{please}找{adv}",
     "{please}找找",
     "找到",
