@@ -83,7 +83,7 @@ simple_entity_patterns = (
     "<{keyword}>",
 )
 
-prepend_entity_fields = (
+entity_field_prefixes = (
     '[文档]',
     '[文章]',
     '[演讲]',
@@ -102,28 +102,12 @@ prepend_entity_fields = (
     '[素材]',
 )
 
-entity_fields = (
+entity_field_suffixes = (
     '内容',
-    '[文档]',
-    '[文章]',
     '方面',
-    '[演讲]',
-    '[讲话]',
     '相关',
-    '[知识]',
     '类',
-    '[视频]',
-    '[讲座]',
-    '[课]',
-    '[课程]',
-    '[教程]',
-    '[资料]',
-    '[材料]',
-    '[电影]',
-    '[书籍]',
-    '[商品]',
-    '[素材]',
-)
+) + entity_field_prefixes
 
 complex_entity_fields = {
     '方面',
@@ -135,12 +119,12 @@ des = ('的', '', '')
 
 
 def get_a_entity_field():
-    field = random.choice(entity_fields)
+    field = random.choice(entity_field_suffixes)
     if field in complex_entity_fields and random.randint(0, 1) == 0:
         de = random.choice(des)
         concrete_field = None
         while concrete_field is None:
-            concrete_field = random.choice(entity_fields)
+            concrete_field = random.choice(entity_field_suffixes)
             if concrete_field in complex_entity_fields:
                 concrete_field = None
         field = field + de + concrete_field
@@ -154,7 +138,7 @@ def get_a_composed_entity_pattern():
     if v <= 33:
         return get_a_about() + '<{keyword}>'
     if v <= 60:
-        return random.choice(prepend_entity_fields) + '<{keyword}>'
+        return random.choice(entity_field_prefixes) + '<{keyword}>'
     if v <= 85:
         return '<{keyword}>' + get_a_entity_field()
     return get_a_about() + '<{keyword}>' + get_a_entity_field()
@@ -190,7 +174,7 @@ def get_a_entity_pattern():
     return get_a_composed_entity_pattern()
 
 
-tailers = (
+tails = (
     '?',
     '可以吗',
     '怎么样',
@@ -207,7 +191,7 @@ def get_a_tail():
     rnd = random.randint(0, 100)
     if rnd <= 80:
         return ''
-    return random.choice(tailers)
+    return random.choice(tails)
 
 
 puncts = ('', ',', '.', '!', '?')
