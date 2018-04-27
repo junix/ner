@@ -5,6 +5,8 @@ from api.ner.business import get_entity
 from api.ner.serializers import ner_result, ner_request
 from api.restplus import api
 
+from log import log
+
 ns = api.namespace('ner', description='recognize search entity')
 
 
@@ -36,5 +38,7 @@ class BatchSearchEntityRecognizer(Resource):
         for item in request.json:
             query = item['query']
             cate, entity = get_entity(query)
-            reps.append({'category': cate if cate else None, 'entity': entity})
+            log.info('%s -> (%s, %s)', query, cate, entity)
+            rep = {'category': cate if cate else None, 'entity': entity}
+            reps.append(rep)
         return reps, 201
