@@ -39,6 +39,10 @@ search_ops = (
     '哪里有',
     '{please}看{adv}',
     '{please}听{adv}',
+    '{please}打开',
+    '{please}跳到',
+    '{please}回到',
+    '{please}登录到',
 )
 
 pleases = (
@@ -147,11 +151,11 @@ def get_a_entity_field():
 
 def get_a_composed_entity_pattern():
     v = random.randint(0, 100)
-    if v <= 25:
+    if v <= 33:
         return get_a_about() + '<{keyword}>'
-    if v <= 50:
+    if v <= 60:
         return random.choice(prepend_entity_fields) + '<{keyword}>'
-    if v <= 75:
+    if v <= 85:
         return '<{keyword}>' + get_a_entity_field()
     return get_a_about() + '<{keyword}>' + get_a_entity_field()
 
@@ -187,9 +191,6 @@ def get_a_entity_pattern():
 
 
 tailers = (
-    '',
-    '',
-    '',
     '?',
     '可以吗',
     '怎么样',
@@ -200,6 +201,14 @@ tailers = (
     '行吗',
     '行不',
 )
+
+
+def get_a_tail():
+    rnd = random.randint(0, 100)
+    if rnd <= 80:
+        return ''
+    return random.choice(tailers)
+
 
 puncts = ('', ',', '.', '!', '?')
 
@@ -293,7 +302,7 @@ def generate_sentence():
         else:
             entity = get_a_composed_entity_pattern()
 
-        t = random.choice(tailers)
+        t = get_a_tail()
 
         noise = ""
         if search_ops and random.randint(0, 10) <= 4:
