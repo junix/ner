@@ -38,7 +38,7 @@ class BatchSearchEntityRecognizer(Resource):
         for item in request.json:
             query = item['query']
             cate, entity = get_entity(query)
-            log.info('%s -> (%s, %s)', query, cate, entity)
+            log.error('%s -> (%s, %s)', query, cate, entity)
             rep = {'category': cate if cate else None, 'entity': entity}
             reps.append(rep)
         return reps, 201
