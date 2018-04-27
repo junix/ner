@@ -164,19 +164,23 @@ def detect_input_shape(dataset):
 def fetch_tags(model, text):
     words = list(jieba.cut(text))
     sentence = transformer.transform(words)
-    output = model[sentence]
-    output.detach_()
-    # tags = output.detach().cpu().numpy().argmax(axis=1)
-    _, tags = output.max(dim=1)
-    return words, tags.tolist()
+
+    with torch.no_grad():
+        output = model[sentence]
+        _, tags = output.max(dim=1)
+        return words, tags.tolist()
 
 
-def load_predict(model=None, output_keyword=False):
+def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if model is None:
-        model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
-        model.eval()
-        model.change_context(device)
+    model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
+    model.eval()
+    model.change_context(device)
+    return model
+
+
+def load_predict(output_keyword=False):
+    model = load_model()
 
     def predict(sentence):
         sentence = regularize_punct(sentence)
