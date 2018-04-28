@@ -30,8 +30,6 @@ class EntityRecognizer(nn.Module):
         self.num_layers = num_layers
         self.rnn = nn.LSTM(input_size=input_size, hidden_size=hidden_size, dropout=0.5, num_layers=self.num_layers)
         self.relu = nn.ReLU()
-        # self.bn = nn.BatchNorm1d(hidden_size)
-        # self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size)
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
         self.hidden2tag = nn.Linear(hidden_size, out_features=3)
         self.hidden = self.init_hidden()
@@ -77,18 +75,18 @@ def to_tensor(val, device):
         tensor = torch.from_numpy(val.astype(np.float32))
         return tensor.to(device)
     if isinstance(val, (float, np.float32, np.float64, np.float16)):
-        return torch.FloatTensor([float(val)], device=device)
+        return torch.tensor([val], dtype=torch.float32, device=device)
 
     raise TypeError("Fail to convert {elem} to tensor".format(elem=val))
 
 
 def train(model, dataset):
     model.train()
-    optimizer = optim.SGD(model.parameters(), lr=0.1)
-    loss_function = nn.NLLLoss()
-    training_dataset = dataset
     count = 1
-    for epoch in range(60):  # again, normally you would NOT do 300 epochs, it is toy data
+    training_dataset = dataset
+    loss_function = nn.NLLLoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.1)
+    for epoch in range(60):
         for sentence, target in training_dataset:
             sentence = to_tensor(sentence, model.device)
             target = to_tensor(target, model.device).long()

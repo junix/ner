@@ -4,12 +4,16 @@
       <w>advs</w>
       <w>cors</w>
       <w>grpcio</w>
+      <w>ilang</w>
       <w>jieba</w>
+      <w>langs</w>
+      <w>olang</w>
       <w>protobuf</w>
       <w>punct</w>
       <w>puncts</w>
       <w>restplus</w>
       <w>sklearn</w>
+      <w>softmax</w>
     </words>
   </dictionary>
 </component>
