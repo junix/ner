@@ -12,6 +12,7 @@ import dataset.transformer as transformer
 import jieba_dict
 from dataset.gen_dataset import load_dataset
 from utils.str_algo import regularize_punct
+from conf import DEVICE
 
 _model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
     pwd=os.path.dirname(__file__), sep=os.path.sep)
@@ -22,9 +23,8 @@ jieba_dict.init_user_dict()
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, device, input_size=-1, num_layers=2, hidden_size=1024):
+    def __init__(self, input_size=-1, num_layers=2, hidden_size=1024):
         super(EntityRecognizer, self).__init__()
-        self.device = device
         self.hidden_size = hidden_size
         self.input_size = input_size
         self.num_layers = num_layers
@@ -32,11 +32,10 @@ class EntityRecognizer(nn.Module):
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
         self.hidden2tag = nn.Linear(hidden_size, out_features=3)
         self.hidden = self.init_hidden()
-        self.change_context(device)
+        self.move_to_device(DEVICE)
 
-    def change_context(self, device):
-        self.device = device
-        if self.device.type == 'cpu':
+    def move_to_device(self, device):
+        if device.type == 'cpu':
             self.cpu()
         else:
             self.cuda()
@@ -44,8 +43,8 @@ class EntityRecognizer(nn.Module):
     def init_hidden(self):
         # return to_var(torch.zeros(self.num_layers, 1, self.hidden_size), self.use_gpu)
         return (
-            torch.zeros(self.num_layers, 1, self.hidden_size, device=self.device),
-            torch.zeros(self.num_layers, 1, self.hidden_size, device=self.device)
+            torch.zeros(self.num_layers, 1, self.hidden_size, device=DEVICE),
+            torch.zeros(self.num_layers, 1, self.hidden_size, device=DEVICE)
         )
 
     def __getitem__(self, words_seq):
@@ -53,7 +52,7 @@ class EntityRecognizer(nn.Module):
         return self.forward(words_seq)
 
     def forward(self, words):
-        words = to_tensor(words, self.device)
+        words = to_tensor(words)
         word_len = len(words)
         words = words.view(word_len, 1, -1)
         lstm_out, self.hidden = self.rnn(words, self.hidden)
@@ -62,18 +61,16 @@ class EntityRecognizer(nn.Module):
         return tag_scores
 
     def save(self, file):
-        orig_device, self.device = self.device, None
         torch.save(self, file)
-        self.device = orig_device
 
 
-def to_tensor(value, device):
+def to_tensor(value):
     if isinstance(value, torch.Tensor):
-        return value.to(device)
+        return value.to(DEVICE)
     if isinstance(value, (list, np.ndarray)):
-        return torch.tensor(value, dtype=torch.float32, device=device)
+        return torch.tensor(value, dtype=torch.float32, device=DEVICE)
     if isinstance(value, (float, np.float16, np.float32, np.float64)):
-        return torch.tensor([value], dtype=torch.float32, device=device)
+        return torch.tensor([value], dtype=torch.float32, device=DEVICE)
 
     raise ValueError("Fail to convert {elem} to tensor".format(elem=value))
 
@@ -86,8 +83,8 @@ def train(model, dataset):
     optimizer = optim.SGD(model.parameters(), lr=0.1)
     for epoch in range(60):
         for sentence, target in training_dataset:
-            sentence = to_tensor(sentence, model.device)
-            target = to_tensor(target, model.device).long()
+            sentence = to_tensor(sentence)
+            target = to_tensor(target).long()
             model.zero_grad()
             model.hidden = model.init_hidden()
             tag_scores = model.forward(sentence)
@@ -104,13 +101,12 @@ def train(model, dataset):
 
 
 def train_and_dump(load_old=False):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     dataset = load_dataset()
     if load_old:
         model = torch.load(_default_model_dump_file)
-        model.change_context(device)
     else:
-        model = EntityRecognizer(device=device, input_size=detect_input_shape(dataset))
+        model = EntityRecognizer(input_size=detect_input_shape(dataset))
+    model.move_to_device(DEVICE)
     train(model, dataset)
 
 
@@ -131,10 +127,9 @@ def fetch_tags(model, text):
 
 
 def load_model():
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
     model.eval()
-    model.change_context(device)
+    model.move_to_device(DEVICE)
     return model
 
 
