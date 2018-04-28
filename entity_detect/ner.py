@@ -68,16 +68,15 @@ class EntityRecognizer(nn.Module):
         self.device = orig_device
 
 
-def to_tensor(val, device):
-    if isinstance(val, torch.Tensor):
-        return val.to(device)
-    if isinstance(val, np.ndarray):
-        tensor = torch.from_numpy(val.astype(np.float32))
-        return tensor.to(device)
-    if isinstance(val, (float, np.float32, np.float64, np.float16)):
-        return torch.tensor([val], dtype=torch.float32, device=device)
+def to_tensor(value, device):
+    if isinstance(value, torch.Tensor):
+        return value.to(device)
+    if isinstance(value, (list, np.ndarray)):
+        return torch.tensor(value, dtype=torch.float32, device=device)
+    if isinstance(value, (float, np.float16, np.float32, np.float64)):
+        return torch.tensor([value], dtype=torch.float32, device=device)
 
-    raise TypeError("Fail to convert {elem} to tensor".format(elem=val))
+    raise ValueError("Fail to convert {elem} to tensor".format(elem=value))
 
 
 def train(model, dataset):
