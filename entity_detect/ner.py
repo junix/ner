@@ -77,8 +77,7 @@ def to_tensor(val, device):
         tensor = torch.from_numpy(val.astype(np.float32))
         return tensor.to(device)
     if isinstance(val, (float, np.float32, np.float64, np.float16)):
-        tensor = torch.FloatTensor([float(val)])
-        return tensor.to(device)
+        return torch.FloatTensor([float(val)], device=device)
 
     raise TypeError("Fail to convert {elem} to tensor".format(elem=val))
 
@@ -87,51 +86,15 @@ def train(model, dataset):
     model.train()
     optimizer = optim.SGD(model.parameters(), lr=0.1)
     loss_function = nn.NLLLoss()
-
-    # model.change_device(device)
-    # See what the scores are before training
-    # Note that element i,j of the output is the score for ner j for word i.
-
-    # testset_size = 10000
-    # ys_test = ys[:testset_size]
-    # xs = [to_var(x, use_gpu=use_gpu) for x in xs]
-    # ys = [to_var(y, use_gpu=use_gpu) for y in ys]
-    # xs_test = xs[:testset_size]
-    # training_dataset = [(to_var(x, use_gpu), to_var(y, use_gpu).long()) for x, y in dataset]
     training_dataset = dataset
-
-    # def accu():
-    #     ys_hat = F.sigmoid(torch.cat([model[x] for x in xs_test]))
-    #     ys_hat = ys_hat.data.cpu().numpy()
-    #     ys_hat = ys_hat.reshape(ys_test.shape)
-    #     ys_hat = np.where(ys_hat > 0.5, 1.0, .0)
-    #     return accuracy_score(ys_test, ys_hat)
-
     count = 1
     for epoch in range(60):  # again, normally you would NOT do 300 epochs, it is toy data
         for sentence, target in training_dataset:
             sentence = to_tensor(sentence, model.device)
             target = to_tensor(target, model.device).long()
-            # Step 1. Remember that Pytorch accumulates gradients.
-            # We need to clear them out before each instance
             model.zero_grad()
-
-            # Also, we need to clear out the hidden state of the LSTM,
-            # detaching it from its history on the last instance.
             model.hidden = model.init_hidden()
-
-            # Step 2. Get our inputs ready for the network, that is, turn them into
-            # Variables of word indices.
-
-            # targets = prepare_sequence(tags, tag_to_ix)
-            # Step 3. Run our forward pass.
             tag_scores = model.forward(sentence)
-
-            # Step 4. Compute the loss, gradients, and update the parameters by
-            #  calling optimizer.step()
-            # target_in = target_in.view(tag_scores.shape)
-            # tag_scores = tag_scores.view(target.shape)
-            # loss = F.binary_cross_entropy(tag_scores, target)
             loss = loss_function(tag_scores, target)
             loss.backward()
             optimizer.step()
