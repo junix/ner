@@ -29,7 +29,6 @@ class EntityRecognizer(nn.Module):
         self.input_size = input_size
         self.num_layers = num_layers
         self.rnn = nn.LSTM(input_size=input_size, hidden_size=hidden_size, dropout=0.5, num_layers=self.num_layers)
-        self.relu = nn.ReLU()
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
         self.hidden2tag = nn.Linear(hidden_size, out_features=3)
         self.hidden = self.init_hidden()
