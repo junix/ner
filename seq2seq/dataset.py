@@ -47,7 +47,9 @@ def build_lang_from_dict(file):
     lang = Lang()
     with open(file) as f:
         for line in f:
-            lang.add_word(line.strip())
+            word = line.strip()
+            if len(word) <= 4:
+                lang.add_word(word)
     return lang
 
 
