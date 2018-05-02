@@ -119,7 +119,7 @@ def train_iters(encoder, decoder, print_every=1000, plot_every=100, learning_rat
         print_loss_total += loss
         plot_loss_total += loss
         count += 1
-        if count % 1000 == 0:
+        if count % 20000 == 0:
             print(count)
             torch.save(encoder, 'encoder.pt')
             torch.save(decoder, 'decoder.pt')
