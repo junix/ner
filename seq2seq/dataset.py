@@ -58,10 +58,13 @@ lang = build_lang_from_dict(os.path.dirname(__file__) + '/../jieba_dict/dict.dat
 
 def generate_seq2seq_dataset():
     for sentence in generate_sentence():
-        words = list(jieba.cut(sentence))
-        tags = list(tagging(words))
-        words = [w for w, _ in tags] + ['EOS']
-        tags = [tag for _, tag in tags]
-        yield torch.tensor(transform(words), dtype=torch.float32, device=DEVICE), tensor_from_sentence(lang,
-                                                                                                       output_seq_of(
-                                                                                                           words, tags))
+        try:
+            words = list(jieba.cut(sentence))
+            tags = list(tagging(words))
+            words = [w for w, _ in tags] + ['EOS']
+            tags = [tag for _, tag in tags]
+            in_tensor = torch.tensor(transform(words), dtype=torch.float32, device=DEVICE)
+            out_tensor = tensor_from_sentence(lang, output_seq_of(words, tags))
+            return in_tensor, out_tensor
+        except:
+            pass
