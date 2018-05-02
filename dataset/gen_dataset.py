@@ -208,7 +208,7 @@ def _read_words():
                 pass
 
 
-_all_words = tuple(set(_read_words()))
+_all_words = [w for w in set(_read_words()) if len(w) <= 4]
 _all_words_and_puncts = _all_words + puncts
 
 
