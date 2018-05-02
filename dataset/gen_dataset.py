@@ -103,11 +103,11 @@ entity_field_prefixes = (
 )
 
 entity_field_suffixes = (
-    '内容',
-    '方面',
-    '相关',
-    '类',
-) + entity_field_prefixes
+                            '内容',
+                            '方面',
+                            '相关',
+                            '类',
+                        ) + entity_field_prefixes
 
 complex_entity_fields = {
     '方面',
@@ -308,6 +308,8 @@ def generate_dataset():
         yield words, tags
 
 
+
+
 def load_dataset():
     from word2vec.gensims import Word2Vec
     embed = Word2Vec()
@@ -320,3 +322,7 @@ def keyword_of(words, tags):
     keyword = ''.join([w for w, t in zip(words, tags) if t == 1])
     category = ''.join([w for w, t in zip(words, tags) if t == 2])
     return category, keyword
+
+
+def output_seq_of(words, tags):
+    return [w for w, t in zip(words, tags) if t != 0]

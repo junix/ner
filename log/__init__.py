@@ -8,4 +8,4 @@ logging.config.fileConfig(_log_file_path, disable_existing_loggers=False)
 if FLASK_ENV == 'prod':
     log = logging.getLogger('errorLogger')
 else:
-    log = logging.getLogger('debugLogger')
+    log = logging.getLogger('errorLogger')
