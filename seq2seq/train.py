@@ -121,6 +121,8 @@ def train_iters(encoder, decoder, print_every=1000, plot_every=100, learning_rat
         count += 1
         if count % 1000 == 0:
             print(count)
+            torch.save(encoder, 'encoder.pt')
+            torch.save(decoder, 'decoder.pt')
 
         # if iter % print_every == 0:
         #     print_loss_avg = print_loss_total / print_every
