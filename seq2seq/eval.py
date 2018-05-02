@@ -10,7 +10,7 @@ from dataset.transformer import transform
 
 def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
     with torch.no_grad():
-        words = list(jieba.cut(sentence))
+        words = list(jieba.cut(sentence)) + ['EOS']
         input_tensor = transform(words)
         input_length = input_tensor.size()[0]
         encoder_hidden = encoder.init_hidden()
