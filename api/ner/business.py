@@ -1,4 +1,4 @@
-from entity_detect.ner import load_predict
+from entity_detect.predict import load_predict
 
 _pred = load_predict(output_keyword=True)
 
