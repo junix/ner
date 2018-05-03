@@ -1,22 +1,10 @@
-import os
-import re
-
-import jieba
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
 
-import dataset.transformer as transformer
 import jieba_dict
-from dataset.gen_dataset import load_dataset
-from utils.str_algo import regularize_punct
 from conf import DEVICE
-
-_model_dump_dir = '{pwd}{sep}..{sep}model_dump'.format(
-    pwd=os.path.dirname(__file__), sep=os.path.sep)
-_default_model_dump_file = _model_dump_dir + os.path.sep + 'model.dump'
 
 jieba_dict.init_user_dict()
 
@@ -73,105 +61,3 @@ def to_tensor(value):
         return torch.tensor([value], dtype=torch.float32, device=DEVICE)
 
     raise ValueError("Fail to convert {elem} to tensor".format(elem=value))
-
-
-def train(model, dataset):
-    model.train()
-    count = 1
-    training_dataset = dataset
-    loss_function = nn.NLLLoss()
-    optimizer = optim.SGD(model.parameters(), lr=0.1)
-    for epoch in range(60):
-        for sentence, target in training_dataset:
-            sentence = to_tensor(sentence)
-            target = to_tensor(target).long()
-            model.zero_grad()
-            model.hidden = model.init_hidden()
-            tag_scores = model.forward(sentence)
-            loss = loss_function(tag_scores, target)
-            loss.backward()
-            optimizer.step()
-            count += 1
-            if count % 10000 == 0:
-                print('processed sentences count = ', count)
-            if count % 50000 == 0:
-                model.save(_default_model_dump_file)
-
-    return model
-
-
-def train_and_dump(load_old=False):
-    dataset = load_dataset()
-    if load_old:
-        model = torch.load(_default_model_dump_file)
-    else:
-        model = EntityRecognizer(input_size=detect_input_shape(dataset))
-    model.move_to_device(DEVICE)
-    train(model, dataset)
-
-
-def detect_input_shape(dataset):
-    for x, _ in dataset:
-        return x.shape[-1]
-    raise ValueError('empty dataset')
-
-
-def fetch_tags(model, text):
-    words = list(jieba.cut(text))
-    sentence = transformer.transform(words)
-
-    with torch.no_grad():
-        output = model[sentence]
-        _, tags = output.max(dim=1)
-        return words, tags.tolist()
-
-
-def load_model():
-    model = torch.load(_default_model_dump_file, map_location=lambda storage, loc: storage)
-    model.eval()
-    model.move_to_device(DEVICE)
-    return model
-
-
-def load_predict(output_keyword=False):
-    model = load_model()
-
-    def predict(sentence):
-        sentence = regularize_punct(sentence)
-        if not sentence:
-            return '' if output_keyword else []
-        if not output_keyword:
-            _words, tags = fetch_tags(model, sentence)
-            return tags
-        sub_sentences = re.split('[,.!?]', sentence)
-        old_category, old_keywords = '', ''
-        for sub_sentence in sub_sentences:
-            words, tags = fetch_tags(model, sub_sentence)
-            category, keywords = select_keywords(words, tags)
-            if category and keywords:
-                return category, keywords
-            if not old_category and category:
-                old_category = category
-            if not old_keywords and keywords:
-                old_keywords = keywords
-
-        if not old_keywords:
-            old_keywords = sentence
-        return old_category, old_keywords
-
-    return predict
-
-
-def select_keywords(words, tags):
-    keywords, category, prev_tag = [], [], 0
-    for word, tag in zip(words, tags):
-        if tag == 1:
-            if prev_tag != 1 and keywords:
-                keywords.append(' ')
-            keywords.append(word)
-        elif tag == 2:
-            if prev_tag != 2 and category:
-                category.append(' ')
-            category.append(word)
-        prev_tag = tag
-    return ''.join(category), ''.join(keywords)
