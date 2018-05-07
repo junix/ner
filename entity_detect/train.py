@@ -17,6 +17,7 @@ def train(model, dataset):
     training_dataset = dataset
     loss_function = nn.NLLLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1)
+    acc_loss = 0.0
     for epoch in range(60):
         for sentence, target in training_dataset:
             sentence = to_tensor(sentence)
@@ -25,11 +26,13 @@ def train(model, dataset):
             model.hidden = model.init_hidden()
             tag_scores = model.forward(sentence)
             loss = loss_function(tag_scores, target)
+            acc_loss += loss.item()
             loss.backward()
             optimizer.step()
             count += 1
-            if count % 10000 == 0:
-                print('processed sentences count = ', count)
+            if count % 2000 == 0:
+                print(count, ' => ', float(acc_loss))
+                acc_loss = 0
             if count % 50000 == 0:
                 model.save(MODEL_DUMP_FILE)
 
