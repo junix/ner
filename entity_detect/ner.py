@@ -53,9 +53,9 @@ class EntityRecognizer(nn.Module):
 
 
 def to_tensor(value):
-    if isinstance(value, torch.Tensor):
+    if torch.is_tensor(value):
         return value.to(DEVICE)
-    if isinstance(value, (list, np.ndarray)):
+    if isinstance(value, (list, tuple, np.ndarray)):
         return torch.tensor(value, dtype=torch.float32, device=DEVICE)
     if isinstance(value, (float, np.float16, np.float32, np.float64)):
         return torch.tensor([value], dtype=torch.float32, device=DEVICE)
