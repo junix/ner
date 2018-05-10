@@ -25,10 +25,10 @@ class Word2Vec:
             return self._none_word_vec.copy()
 
     def get_batch(self, items):
-        raise ValueError("not implemented")
+        raise NotImplementedError
 
     def _ensure_model_loaded(self):
-        raise ValueError("not implemented")
+        raise NotImplementedError
 
     def get_raw_word2vec(self, word):
-        raise KeyError("not implemented")
+        raise NotImplementedError
