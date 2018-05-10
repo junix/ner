@@ -1,8 +1,8 @@
 import numpy as np
-from word2vec import wv
 
 
 def transform(words, embed=None):
+    from word2vec import wv
     if embed:
         vecs = embed.get_batch(words)
     else:

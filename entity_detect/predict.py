@@ -1,14 +1,12 @@
 import re
 
-import jieba
 import torch
 
-import dataset.transformer as transformer
-from conf import DEVICE, MODEL_DUMP_FILE
-from utils.str_algo import regularize_punct
 
 
 def fetch_tags(model, text):
+    import jieba
+    import dataset.transformer as transformer
     words = list(jieba.cut(text))
     sentence = transformer.transform(words)
 
@@ -19,6 +17,7 @@ def fetch_tags(model, text):
 
 
 def load_model():
+    from conf import DEVICE, MODEL_DUMP_FILE
     model = torch.load(MODEL_DUMP_FILE, map_location=lambda storage, loc: storage)
     model.eval()
     model.move_to_device(DEVICE)
@@ -26,6 +25,7 @@ def load_model():
 
 
 def load_predict(output_keyword=False):
+    from utils.str_algo import regularize_punct
     model = load_model()
 
     def predict(sentence):
