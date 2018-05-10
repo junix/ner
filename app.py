@@ -1,4 +1,5 @@
 from __init__ import create_app
+from log import log
 
 app = create_app()
 
@@ -6,4 +7,5 @@ app = create_app()
 application = app
 
 if __name__ == '__main__':
+    log.info("start server")
     app.run(debug=app.config['FLASK_DEBUG'], host='0.0.0.0', port=28080)
