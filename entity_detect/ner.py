@@ -6,7 +6,6 @@ import torch.nn.functional as F
 import jieba_dict
 from conf import DEVICE
 
-jieba_dict.init_user_dict()
 
 
 class EntityRecognizer(nn.Module):

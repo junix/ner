@@ -26,9 +26,11 @@ def load_model():
 
 def load_predict(output_keyword=False):
     from utils.str_algo import regularize_punct
+    import jieba_dict
     model = load_model()
 
     def predict(sentence):
+        jieba_dict.init_user_dict()
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []
