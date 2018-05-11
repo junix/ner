@@ -40,6 +40,7 @@ def load_predict(output_keyword=False):
             return tags
         sub_sentences = re.split('[,.!?]', sentence)
         old_category, old_keywords = '', ''
+        all_words = []
         for sub_sentence in sub_sentences:
             words, tags = fetch_tags(model, sub_sentence)
             category, keywords = select_keywords(words, tags)
@@ -47,9 +48,11 @@ def load_predict(output_keyword=False):
                 old_category = category
             if len(old_keywords) < len(keywords):
                 old_keywords = keywords
+            if not old_keywords:
+                all_words.extend(words)
 
         if not old_keywords:
-            old_keywords = remove_stopwords(sentence)
+            old_keywords = ''.join(remove_stopwords(all_words))
         return old_category, old_keywords
 
     return predict
