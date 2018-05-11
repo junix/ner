@@ -1,12 +1,14 @@
 import re
 
 import torch
+from regularize.replace import replace_to_common_words, regularize_punct
+from regularize.remove_stopwords import remove_stopwords
 
 
 def fetch_tags(model, text):
     import jieba
     import dataset.transformer as transformer
-    words = list(jieba.cut(text))
+    words = list(replace_to_common_words(jieba.cut(text)))
     sentence = transformer.transform(words)
 
     with torch.no_grad():
@@ -27,9 +29,7 @@ def load_predict(output_keyword=False):
     model = load_model()
 
     def predict(sentence):
-        from utils.str_algo import regularize_punct
         import jieba_dict
-        import jieba
         jieba_dict.init_user_dict()
         sentence = regularize_punct(sentence)
         if not sentence:
@@ -70,21 +70,3 @@ def select_keywords(words, tags):
         prev_tag = tag
     keywords = remove_stopwords(keywords)
     return ''.join(category), ''.join(keywords)
-
-
-def remove_stopwords(words):
-    import jieba
-    from jieba_dict import is_stopword
-    from itertools import dropwhile
-    if isinstance(words, (list, tuple)):
-        words.reverse()
-        words = list(dropwhile(lambda x: is_stopword(x), words))
-        words.reverse()
-        words = list(dropwhile(lambda x: is_stopword(x), words))
-        return words
-    elif isinstance(words, str):
-        words = list(jieba.cut(words))
-        words = remove_stopwords(words)
-        return ''.join(words)
-
-    raise ValueError("{} can't remove stopwords".format(words))
