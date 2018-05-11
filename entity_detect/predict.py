@@ -3,7 +3,6 @@ import re
 import torch
 
 
-
 def fetch_tags(model, text):
     import jieba
     import dataset.transformer as transformer
@@ -57,6 +56,8 @@ def load_predict(output_keyword=False):
 
 
 def select_keywords(words, tags):
+    from jieba_dict import is_stopword
+    from itertools import dropwhile
     keywords, category, prev_tag = [], [], 0
     for word, tag in zip(words, tags):
         if tag == 1:
@@ -68,4 +69,8 @@ def select_keywords(words, tags):
                 category.append(' ')
             category.append(word)
         prev_tag = tag
+    keywords.reverse()
+    keywords = list(dropwhile(lambda x: is_stopword(x), keywords))
+    keywords.reverse()
+    keywords = list(dropwhile(lambda x: is_stopword(x), keywords))
     return ''.join(category), ''.join(keywords)

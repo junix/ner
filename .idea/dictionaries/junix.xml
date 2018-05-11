@@ -14,6 +14,7 @@
       <w>restplus</w>
       <w>sklearn</w>
       <w>softmax</w>
+      <w>stopword</w>
     </words>
   </dictionary>
 </component>
