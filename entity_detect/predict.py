@@ -77,7 +77,6 @@ def select_keywords(words, tags):
 def clean_phrase(words):
     from jieba_dict import is_stopword
     from itertools import dropwhile
-    print('clean=>', words)
     words.reverse()
     words = list(dropwhile(lambda x: is_stopword(x), words))
     words.reverse()
