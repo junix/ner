@@ -4,7 +4,7 @@ import numpy as np
 import jieba_dict
 import jieba
 import random
-from utils.str_algo import regularize_punct
+from regularize.replace import regularize_punct
 from .transformer import transform
 
 _current_dir = os.path.dirname(__file__)
