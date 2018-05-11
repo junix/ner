@@ -3,6 +3,7 @@ import re
 import torch
 from regularize.replace import replace_to_common_words, regularize_punct
 from regularize.remove_stopwords import remove_stopwords
+from utils.str_algo import is_ascii_text
 import jieba_dict
 
 jieba_dict.init_user_dict()
@@ -38,6 +39,8 @@ def load_predict(output_keyword=False):
         if not output_keyword:
             _words, tags = fetch_tags(model, sentence)
             return tags
+        if is_ascii_text(sentence):
+            return '', sentence
         sub_sentences = re.split('[,.!?]', sentence)
         old_category, old_keywords = '', ''
         all_words = []
