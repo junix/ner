@@ -29,6 +29,7 @@ def load_predict(output_keyword=False):
     def predict(sentence):
         from utils.str_algo import regularize_punct
         import jieba_dict
+        import jieba
         jieba_dict.init_user_dict()
         sentence = regularize_punct(sentence)
         if not sentence:
@@ -49,15 +50,15 @@ def load_predict(output_keyword=False):
                 old_keywords = keywords
 
         if not old_keywords:
-            old_keywords = sentence
+            words = list(jieba.cut(sentence))
+            words = clean_phrase(words)
+            old_keywords = ''.join(words)
         return old_category, old_keywords
 
     return predict
 
 
 def select_keywords(words, tags):
-    from jieba_dict import is_stopword
-    from itertools import dropwhile
     keywords, category, prev_tag = [], [], 0
     for word, tag in zip(words, tags):
         if tag == 1:
@@ -69,8 +70,15 @@ def select_keywords(words, tags):
                 category.append(' ')
             category.append(word)
         prev_tag = tag
-    keywords.reverse()
-    keywords = list(dropwhile(lambda x: is_stopword(x), keywords))
-    keywords.reverse()
-    keywords = list(dropwhile(lambda x: is_stopword(x), keywords))
+    keywords = clean_phrase(keywords)
     return ''.join(category), ''.join(keywords)
+
+
+def clean_phrase(words):
+    from jieba_dict import is_stopword
+    from itertools import dropwhile
+    words.reverse()
+    words = list(dropwhile(lambda x: is_stopword(x), words))
+    words.reverse()
+    words = list(dropwhile(lambda x: is_stopword(x), words))
+    return words
