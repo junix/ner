@@ -9,6 +9,5 @@ app = create_app()
 application = app
 
 if __name__ == '__main__':
-    print('will start server in 20 second')
-    time.sleep(20)
+    log.info('will start server')
     app.run(debug=app.config['FLASK_DEBUG'], host='0.0.0.0', port=28080)
