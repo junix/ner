@@ -1,5 +1,6 @@
 from __init__ import create_app
 import time
+from jieba_dict import init_user_dict
 from log import log
 
 app = create_app()
