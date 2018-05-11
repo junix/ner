@@ -3,6 +3,9 @@ import re
 import torch
 from regularize.replace import replace_to_common_words, regularize_punct
 from regularize.remove_stopwords import remove_stopwords
+import jieba_dict
+
+jieba_dict.init_user_dict()
 
 
 def fetch_tags(model, text):
@@ -29,8 +32,6 @@ def load_predict(output_keyword=False):
     model = load_model()
 
     def predict(sentence):
-        import jieba_dict
-        jieba_dict.init_user_dict()
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []

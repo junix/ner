@@ -1,4 +1,5 @@
 from __init__ import create_app
+import time
 from log import log
 
 app = create_app()
@@ -7,5 +8,6 @@ app = create_app()
 application = app
 
 if __name__ == '__main__':
-    log.info("start server")
+    print('will start server in 20 second')
+    time.sleep(20)
     app.run(debug=app.config['FLASK_DEBUG'], host='0.0.0.0', port=28080)
