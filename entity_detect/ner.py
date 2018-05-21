@@ -49,6 +49,13 @@ class EntityRecognizer(nn.Module):
     def save(self, file):
         torch.save(self, file)
 
+    def init_params(self):
+        for name, param in self.named_parameters():
+            if 'bias' in name:
+                nn.init.constant(param, 0.0)
+            elif 'weight' in name:
+                nn.init.xavier_normal(param)
+
 
 def to_tensor(value):
     if torch.is_tensor(value):
