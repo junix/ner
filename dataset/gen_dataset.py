@@ -9,6 +9,8 @@ from .transformer import transform
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
+_yxt_tags = _current_dir + '/' + 'tags.txt'
+_yxt_titles = _current_dir + '/' + 'titles.txt'
 
 jieba_dict.init_user_dict()
 
@@ -208,6 +210,21 @@ def _read_words():
                 pass
 
 
+def _read_tags():
+    with open(_yxt_tags, 'r') as f:
+        for line in f:
+            yield regularize_punct(line.strip())
+
+
+def _read_titles():
+    with open(_yxt_titles, 'r') as f:
+        for line in f:
+            yield regularize_punct(line.strip())
+
+
+_all_yxt_tags = tuple(_read_tags())
+_all_yxt_titles = tuple(_read_titles())
+
 _all_words = tuple([w for w in set(_read_words()) if len(w) <= 4])
 _all_words_and_puncts = _all_words + puncts
 
@@ -274,40 +291,54 @@ def make_hello():
     return h
 
 
-def generate_sentence():
+def generate_a_yxt_sentence():
+    op = get_a_search_op()
+    if random.randint(0, 10) <= 4:
+        keyword = random.choice(_all_yxt_tags)
+    else:
+        keyword = random.choice(_all_yxt_titles)
+    return '{search_op}<{keyword}>'.format(search_op=op, keyword=keyword)
+
+
+def generate_a_sentence():
+    ws = _all_words
+    w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
+    h = make_hello()
+    op = get_a_search_op()
+
+    if op:
+        entity = get_a_entity_pattern()
+    else:
+        entity = get_a_composed_entity_pattern()
+
+    t = get_a_tail()
+
+    noise = ""
+    if search_ops and random.randint(0, 10) <= 4:
+        noise = fake_sentence(max_word_cnt=2)
+        if random.randint(0, 5) <= 1:
+            noise += random.choice(puncts)
+
+    sentence = noise + h + op + entity.format(keyword=w) + t
+    sentence = regularize_punct(sentence)
+    return sentence
+
+
+def generate_sentences():
     while True:
-        ws = _all_words
-        w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
-        h = make_hello()
-        op = get_a_search_op()
-
-        if op:
-            entity = get_a_entity_pattern()
+        if random.random(0, 100) < 5:
+            yield generate_a_yxt_sentence()
         else:
-            entity = get_a_composed_entity_pattern()
-
-        t = get_a_tail()
-
-        noise = ""
-        if search_ops and random.randint(0, 10) <= 4:
-            noise = fake_sentence(max_word_cnt=2)
-            if random.randint(0, 5) <= 1:
-                noise += random.choice(puncts)
-
-        sentence = noise + h + op + entity.format(keyword=w) + t
-        sentence = regularize_punct(sentence)
-        yield sentence
+            yield generate_a_sentence()
 
 
 def generate_dataset():
-    for sentence in generate_sentence():
+    for sentence in generate_sentences():
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
         yield words, tags
-
-
 
 
 def load_dataset():

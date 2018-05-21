@@ -3,7 +3,7 @@ import torch
 import jieba
 
 from conf import DEVICE
-from dataset.gen_dataset import generate_sentence, tagging, output_seq_of
+from dataset.gen_dataset import generate_sentences, tagging, output_seq_of
 from dataset.transformer import transform
 
 MAX_LENGTH = 20
@@ -57,7 +57,7 @@ lang = build_lang_from_dict(os.path.dirname(__file__) + '/../jieba_dict/dict.dat
 
 
 def generate_seq2seq_dataset():
-    for sentence in generate_sentence():
+    for sentence in generate_sentences():
         try:
             words = list(jieba.cut(sentence))
             tags = list(tagging(words))
