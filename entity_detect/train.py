@@ -13,11 +13,10 @@ jieba_dict.init_user_dict()
 
 def train(model, dataset):
     model.train()
-    count = 1
     training_dataset = dataset
     loss_function = nn.NLLLoss()
     optimizer = optim.SGD(model.parameters(), lr=1e-3)
-    acc_loss = 0.0
+    count, acc_loss = 0, 0.0
     for epoch in range(60):
         for sentence, target in training_dataset:
             sentence = to_tensor(sentence)
@@ -26,9 +25,9 @@ def train(model, dataset):
             model.hidden = model.init_hidden()
             tag_scores = model.forward(sentence)
             loss = loss_function(tag_scores, target)
-            acc_loss += loss.item()
             loss.backward()
             optimizer.step()
+            acc_loss += loss.item()
             count += 1
             if count % 2000 == 0:
                 print(count, ' => ', float(acc_loss))
