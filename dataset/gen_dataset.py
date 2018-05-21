@@ -68,7 +68,7 @@ search_op_advs = (
 
 
 def get_a_search_op():
-    if random.randint(0, 10) <= 4:
+    if random.randint(0, 100) <= 20:
         return ''
     op = random.choice(search_ops)
     if op:
