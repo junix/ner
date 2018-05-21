@@ -21,7 +21,7 @@ class EntityRecognizer(nn.Module):
                            num_layers=self.num_layers,
                            bidirectional=self.bidirectional)
         # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
-        self.hidden2tag = nn.Linear(hidden_size, out_features=3)
+        self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
         self.hidden = self.init_hidden()
         self.move_to_device(DEVICE)
 
