@@ -326,7 +326,7 @@ def generate_a_sentence():
 
 def generate_sentences():
     while True:
-        if random.random(0, 100) < 5:
+        if random.randint(0, 100) < 5:
             yield generate_a_yxt_sentence()
         else:
             yield generate_a_sentence()
