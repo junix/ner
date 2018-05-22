@@ -6,7 +6,7 @@ import jieba
 import random
 from regularize.replace import regularize_punct
 from .transformer import transform
-from .wiki import generate_sentence as gen_wiki_sentence
+from .wiki import generate_sentences as gen_wiki_sentences
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
@@ -326,7 +326,7 @@ def generate_a_fake_sentence():
 
 
 def generate_sentences():
-    wikis = gen_wiki_sentence()
+    wikis = gen_wiki_sentences()
     while True:
         rnd = random.randint(0, 100)
         if rnd < 5:
