@@ -15,7 +15,7 @@ def train(model, dataset):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    optimizer = optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = optim.SGD(model.parameters(), lr=1e-4)
     count, acc_loss = 0, 0.0
     for epoch in range(60):
         for sentence, target in training_dataset:
