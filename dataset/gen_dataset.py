@@ -325,14 +325,20 @@ def generate_a_fake_sentence():
     return sentence
 
 
+def generate_wiki_tagged_sentence():
+    while True:
+        for sentence in gen_wiki_sentences():
+            yield '<{keyword}>'.format(keyword=sentence)
+
+
 def generate_sentences():
-    wikis = gen_wiki_sentences()
+    wiki_gen = generate_wiki_tagged_sentence()
     while True:
         rnd = random.randint(0, 100)
         if rnd < 5:
             yield generate_a_yxt_sentence()
         elif rnd < 50:
-            yield '<{keyword}>'.format(keyword=wikis.send(None))
+            yield wiki_gen.send(None)
         else:
             yield generate_a_fake_sentence()
 
