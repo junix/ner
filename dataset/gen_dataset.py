@@ -6,6 +6,7 @@ import jieba
 import random
 from regularize.replace import regularize_punct
 from .transformer import transform
+from .wiki import generate_sentence as gen_wiki_sentence
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
@@ -300,7 +301,7 @@ def generate_a_yxt_sentence():
     return '{search_op}<{keyword}>'.format(search_op=op, keyword=keyword)
 
 
-def generate_a_sentence():
+def generate_a_fake_sentence():
     ws = _all_words
     w = fake_sentence(min_word_cnt=1, max_word_cnt=3, with_punct=False)
     h = make_hello()
@@ -325,11 +326,15 @@ def generate_a_sentence():
 
 
 def generate_sentences():
+    wikis = gen_wiki_sentence()
     while True:
-        if random.randint(0, 100) < 5:
+        rnd = random.randint(0, 100)
+        if rnd < 5:
             yield generate_a_yxt_sentence()
+        elif rnd < 50:
+            yield '<{keyword}>'.format(keyword=wikis.send(None))
         else:
-            yield generate_a_sentence()
+            yield generate_a_fake_sentence()
 
 
 def generate_dataset():
