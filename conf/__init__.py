@@ -7,7 +7,7 @@ import os
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-GENSIM_MODEL_PATH = "/home/wanglijun/word2vec_models/200/model.bin"
+GENSIM_MODEL_PATH = "/data/word2vec_models/200ex/model.bin"
 
 word2vec_rpc_servers = (
     ('localhost', 9191),
