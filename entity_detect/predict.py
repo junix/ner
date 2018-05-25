@@ -1,19 +1,19 @@
 import re
 
 import torch
+import jieba
 from regularize.replace import replace_to_common_words, regularize_punct
 from regularize.remove_stopwords import remove_stopwords
 from utils.str_algo import is_ascii_text
 import jieba_dict
+from dataset.lang import Lang
 
 jieba_dict.init_user_dict()
 
 
-def fetch_tags(model, text):
-    import jieba
-    import dataset.transformer as transformer
+def fetch_tags(model, text, lang):
     words = list(replace_to_common_words(jieba.cut(text)))
-    sentence = transformer.transform(words)
+    sentence = lang.to_index(words)
 
     with torch.no_grad():
         output = model[sentence]
@@ -31,13 +31,14 @@ def load_model():
 
 def load_predict(output_keyword=False):
     model = load_model()
+    lang = Lang.load()
 
     def predict(sentence):
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []
         if not output_keyword:
-            _words, tags = fetch_tags(model, sentence)
+            _words, tags = fetch_tags(model, sentence, lang)
             return tags
         if is_ascii_text(sentence):
             return '', sentence

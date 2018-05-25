@@ -16,6 +16,9 @@ class Lang:
     def __getitem__(self, item):
         return self.to_index(item)
 
+    def vocab_size(self):
+        return len(self.word2index)
+
     def to_index(self, words):
         if isinstance(words, (list, tuple)):
             return tuple(self.word2index.get(w, Lang.NIL_INDEX) for w in words)

@@ -56,6 +56,11 @@ class EntityRecognizer(nn.Module):
     def save(self, file):
         torch.save(self, file)
 
+    def params_without_embed(self):
+        for name, param in self.named_parameters():
+            if 'embedding' not in name:
+                yield param
+
     def init_params(self):
         for name, param in self.named_parameters():
             if 'bias' in name:
