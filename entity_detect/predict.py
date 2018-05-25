@@ -48,6 +48,8 @@ def load_predict(output_keyword=False):
         for sub_sentence in sub_sentences:
             words, tags = fetch_tags(model, sub_sentence, lang)
             category, keywords = select_keywords(words, tags)
+            if category and keywords:
+                break
             if len(old_category) < len(category):
                 old_category = category
             if len(old_keywords) < len(keywords):
