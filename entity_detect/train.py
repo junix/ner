@@ -30,10 +30,10 @@ def train(model, dataset, lang):
             tag_scores = model.forward(sentence)
             loss = loss_function(tag_scores, target)
             loss.backward()
-            if faked:
-                optimizer_for_fake.step()
-            else:
-                optimizer_for_real.step()
+            # if faked:
+            #     optimizer_for_fake.step()
+            # else:
+            optimizer_for_real.step()
             acc_loss += loss.item()
             count += 1
             if count % 2000 == 0:
