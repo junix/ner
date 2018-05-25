@@ -1,11 +1,10 @@
-import os
-import re
-import numpy as np
-import jieba_dict
 import jieba
+import os
 import random
+import re
+
+import jieba_dict
 from regularize.replace import regularize_punct
-from .transformer import transform
 from .wiki import generate_sentences as gen_wiki_sentences
 
 _current_dir = os.path.dirname(__file__)
@@ -336,28 +335,20 @@ def generate_sentences():
     while True:
         rnd = random.randint(0, 100)
         if rnd < 5:
-            yield generate_a_yxt_sentence()
+            yield generate_a_yxt_sentence(), True
         elif rnd < 50:
-            yield wiki_gen.send(None)
+            yield wiki_gen.send(None), False
         else:
-            yield generate_a_fake_sentence()
+            yield generate_a_fake_sentence(), True
 
 
 def generate_dataset():
-    for sentence in generate_sentences():
+    for sentence, faked in generate_sentences():
         words = list(jieba.cut(sentence))
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
-        yield words, tags
-
-
-def load_dataset():
-    from word2vec.gensims import Word2Vec
-    embed = Word2Vec()
-    dataset = generate_dataset()
-    for xs, y_true in dataset:
-        yield transform(xs, embed=embed), np.array(y_true)
+        yield words, tags, faked
 
 
 def keyword_of(words, tags):
