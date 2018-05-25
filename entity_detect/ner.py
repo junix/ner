@@ -9,11 +9,12 @@ from conf import DEVICE
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, input_size=-1, num_layers=2, hidden_size=512):
+    def __init__(self, input_size, vocab_size, num_layers=2, hidden_size=512):
         super(EntityRecognizer, self).__init__()
         self.hidden_size = hidden_size
         self.input_size = input_size
         self.num_layers = num_layers
+        self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=input_size)
         self.bidirectional = True
         self.rnn = nn.LSTM(input_size=input_size,
                            hidden_size=hidden_size,
@@ -43,8 +44,9 @@ class EntityRecognizer(nn.Module):
         return self.forward(words_seq)
 
     def forward(self, words):
-        words = to_tensor(words)
         word_len = len(words)
+        words = to_tensor(words, dtype=torch.long)
+        words = self.embedding(words)
         words = words.view(word_len, 1, -1)
         lstm_out, self.hidden = self.rnn(words, self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(words), -1))
@@ -62,12 +64,12 @@ class EntityRecognizer(nn.Module):
                 nn.init.xavier_normal_(param)
 
 
-def to_tensor(value):
+def to_tensor(value, dtype=torch.float32):
     if torch.is_tensor(value):
-        return value.to(DEVICE)
+        return value.to(DEVICE, dtype=dtype)
     if isinstance(value, (list, tuple, np.ndarray)):
-        return torch.tensor(value, dtype=torch.float32, device=DEVICE)
+        return torch.tensor(value, dtype=dtype, device=DEVICE)
     if isinstance(value, (float, np.float16, np.float32, np.float64)):
-        return torch.tensor([value], dtype=torch.float32, device=DEVICE)
+        return torch.tensor([value], dtype=dtype, device=DEVICE)
 
     raise ValueError("Fail to convert {elem} to tensor".format(elem=value))

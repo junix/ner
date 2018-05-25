@@ -200,8 +200,8 @@ def get_a_tail():
 puncts = ('', ',', '.', '!', '?')
 
 
-def _read_words():
-    with open(jieba_dict.JIEBA_USER_DICT, 'r') as f:
+def _read_words(file):
+    with open(file, 'r') as f:
         for line in f:
             try:
                 word, *_ = re.split('\s', line)
@@ -226,7 +226,7 @@ def _read_titles():
 _all_yxt_tags = tuple(_read_tags())
 _all_yxt_titles = tuple(_read_titles())
 
-_all_words = tuple([w for w in set(_read_words()) if len(w) <= 4])
+_all_words = tuple([w for w in set(_read_words(jieba_dict.JIEBA_USER_DICT)) if len(w) <= 4])
 _all_words_and_puncts = _all_words + puncts
 
 

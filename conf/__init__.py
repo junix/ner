@@ -17,3 +17,6 @@ word2vec_rpc_servers = (
 MODEL_DUMP_FILE = os.path.dirname(__file__) + '/../model_dump/model.dump'
 
 WIKI_DATASET = '/home/wanglijun/corpus/std_zh_wiki'
+
+
+LANG_DUMP_FILE = os.path.dirname(__file__) + '/../model_dump/lang.pt'
