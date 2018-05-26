@@ -1,5 +1,6 @@
 import os
 import jieba
+from itertools import cycle
 
 JIEBA_USER_DICT = os.path.dirname(__file__) + '/dict.dat'
 STOPWORDS_LIST = os.path.dirname(__file__) + '/stopwords.dat'
