@@ -13,7 +13,7 @@ def generate_sentences():
         line = strip(line, '\n\t ')
         if not line:
             continue
-        yield from generate_sentence(line)
+        yield from split_to_pieces(line)
 
 
 def _rejoin(sentence):
@@ -23,8 +23,8 @@ def _rejoin(sentence):
     return join_words2(words)
 
 
-def generate_sentence(text):
-    for sentence in re.split(r'[,。､.;:?!#()\n\t]', regularize_punct(text)):
+def split_to_pieces(text):
+    for sentence in re.split(r'[,。､.;:?!#()\n\t\"]|……', regularize_punct(text)):
         sentence = _rejoin(sentence).strip()
         if len(sentence) > 4:
             yield sentence
