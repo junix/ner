@@ -1,3 +1,4 @@
+import re
 from itertools import cycle
 from conf import CORPUS_LIST
 from regularize import regularize_punct
@@ -23,12 +24,7 @@ def _rejoin(sentence):
 
 
 def generate_sentence(text):
-    acc = []
-    for c in text:
-        if c in '，、!！。（）?？':
-            sentence, acc = regularize_punct(''.join(acc)), []
-            sentence = strip(_rejoin(sentence), ' \n\t')
-            if len(sentence) > 4:
-                yield sentence
-        else:
-            acc.append(c)
+    for sentence in re.split(r'[,。､.;:?!#()\n\t]', regularize_punct(text)):
+        sentence = _rejoin(sentence).strip()
+        if len(sentence) > 4:
+            yield sentence
