@@ -1,6 +1,5 @@
-import re
 from conf import WIKI_DATASET
-from regularize.replace import regularize_punct
+from regularize import regularize_punct
 
 
 def generate_sentences():

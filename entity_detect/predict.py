@@ -2,9 +2,8 @@ import re
 
 import torch
 import jieba
-from regularize.replace import replace_to_common_words, regularize_punct
-from regularize.remove_stopwords import remove_stopwords
-from utils.str_algo import is_ascii_text
+from regularize import replace_to_common_words, regularize_punct, remove_stopwords
+from utils import is_ascii_text
 import jieba_dict
 from dataset.lang import Lang
 

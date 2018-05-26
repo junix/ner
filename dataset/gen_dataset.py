@@ -4,7 +4,7 @@ import random
 import re
 
 import jieba_dict
-from regularize.replace import regularize_punct
+from regularize import regularize_punct
 from .wiki import generate_sentences as gen_wiki_sentences
 
 _current_dir = os.path.dirname(__file__)
