@@ -1,6 +1,6 @@
 from conf import WIKI_DATASET
 from regularize import regularize_punct
-from utils import join_words2
+from utils import join_words2, strip
 
 
 def generate_sentences():
@@ -21,6 +21,6 @@ def generate_sentence(text):
         if c in '，、。（）':
             sentence, acc = regularize_punct(''.join(acc)), []
             if len(sentence) > 4:
-                yield _rejoin(sentence)
+                yield strip(_rejoin(sentence), ' \n\t')
         else:
             acc.append(c)
