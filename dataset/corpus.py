@@ -25,7 +25,7 @@ def _rejoin(sentence):
 def generate_sentence(text):
     acc = []
     for c in text:
-        if c in '，、。（）':
+        if c in '，、!！。（）':
             sentence, acc = regularize_punct(''.join(acc)), []
             if len(sentence) > 4:
                 yield strip(_rejoin(sentence), ' \n\t')
