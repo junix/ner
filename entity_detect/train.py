@@ -4,7 +4,7 @@ import torch.optim as optim
 
 import jieba_dict
 from conf import DEVICE
-from dataset.gen_dataset import generate_dataset
+from dataset import generate_dataset
 from .ner import EntityRecognizer, to_tensor
 from conf import MODEL_DUMP_FILE
 from dataset.lang import Lang

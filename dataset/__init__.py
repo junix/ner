@@ -1,1 +1,1 @@
-from .gen_dataset import generate_dataset
+from dataset.gen_dataset import generate_dataset
