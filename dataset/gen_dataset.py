@@ -26,6 +26,8 @@ search_ops = (
     '{please}搜寻{adv}',
     '{please}搜索{adv}',
     '有',
+    '{please}买',
+    '{please}购买',
     '有没有',
     '有几个',
     '有多少',
