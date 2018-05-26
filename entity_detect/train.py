@@ -16,8 +16,8 @@ def train(model, dataset, lang):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    lr = 1e-3
-    optimizer_for_real = optim.RMSprop(model.parameters(), lr=lr)
+    lr = 1e-4
+    optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
     count, acc_loss = 0, 0.0
     for epoch in range(60):
