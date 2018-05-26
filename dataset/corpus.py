@@ -27,7 +27,8 @@ def generate_sentence(text):
     for c in text:
         if c in '，、!！。（）?？':
             sentence, acc = regularize_punct(''.join(acc)), []
+            sentence = strip(_rejoin(sentence), ' \n\t')
             if len(sentence) > 4:
-                yield strip(_rejoin(sentence), ' \n\t')
+                yield sentence
         else:
             acc.append(c)
