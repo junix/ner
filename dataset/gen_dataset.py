@@ -5,7 +5,7 @@ import re
 
 import jieba_dict
 from regularize import regularize_punct
-from .wiki import generate_sentences as gen_wiki_sentences
+from .corpus import generate_sentences as gen_wiki_sentences
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'

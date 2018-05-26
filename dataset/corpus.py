@@ -1,11 +1,12 @@
-from conf import WIKI_DATASET
+from conf import CORPUS_LIST
 from regularize import regularize_punct
 from utils import join_words2, strip
 
 
 def generate_sentences():
-    for line in open(WIKI_DATASET):
-        yield from generate_sentence(line)
+    for corpus in CORPUS_LIST:
+        for line in open(corpus):
+            yield from generate_sentence(line)
 
 
 def _rejoin(sentence):
