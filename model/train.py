@@ -74,7 +74,7 @@ def train_and_dump(load_old=False):
     if load_old:
         model = torch.load(MODEL_DUMP_FILE)
     else:
-        model = EntityRecognizer(input_size=100, vocab_size=lang.vocab_size())
+        model = EntityRecognizer(input_size=200, vocab_size=lang.vocab_size())
         model.init_params()
     model.move_to_device(DEVICE)
     train(model, dataset, lang)

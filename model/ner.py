@@ -9,7 +9,7 @@ from conf import DEVICE
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, input_size, vocab_size, num_layers=2, hidden_size=1024):
+    def __init__(self, input_size, vocab_size, num_layers=2, hidden_size=512):
         super(EntityRecognizer, self).__init__()
         self.hidden_size = hidden_size
         self.input_size = input_size
