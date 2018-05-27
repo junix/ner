@@ -44,7 +44,7 @@ def train(model, dataset, lang):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    lr = 1e-3
+    lr = 1e-4
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
     saver = _make_period_saver(50000)
@@ -68,7 +68,7 @@ def train(model, dataset, lang):
     return model
 
 
-def train_and_dump(load_old=False):
+def train_and_dump(load_old=False, skip_sentence=0):
     dataset = generate_dataset()
     lang = Lang.load()
     if load_old:
@@ -77,6 +77,8 @@ def train_and_dump(load_old=False):
         model = EntityRecognizer(input_size=200, vocab_size=lang.vocab_size())
         model.init_params()
     model.move_to_device(DEVICE)
+    for i in range(skip_sentence):
+        dataset.send(None)
     train(model, dataset, lang)
 
 
