@@ -44,7 +44,7 @@ def train(model, dataset, lang):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    lr = 1e-2
+    lr = 1e-3
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
     saver = make_period_save(50000)
