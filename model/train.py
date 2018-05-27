@@ -25,6 +25,8 @@ def train(model, dataset, lang):
             sentence = lang.to_index(sentence)
             sentence = to_tensor(sentence, dtype=torch.long)
             target = to_tensor(target, dtype=torch.long)
+            if len(sentence) <= 1:
+                continue
             model.zero_grad()
             model.hidden = model.init_hidden()
             tag_scores = model.forward(sentence)
