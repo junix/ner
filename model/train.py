@@ -27,7 +27,7 @@ class Metrics:
             self.loss = .0
 
 
-def make_period_save(period):
+def _make_period_saver(period):
     count = 0
 
     def _saver(model):
@@ -47,24 +47,23 @@ def train(model, dataset, lang):
     lr = 1e-2
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
-    saver = make_period_save(50000)
+    saver = _make_period_saver(50000)
     metrics = Metrics()
-    for epoch in range(60):
-        for sentence, target, faked in training_dataset:
-            sentence = lang.to_index(sentence)
-            sentence = to_tensor(sentence, dtype=torch.long)
-            target = to_tensor(target, dtype=torch.long)
-            model.zero_grad()
-            model.hidden = model.init_hidden()
-            tag_scores = model.forward(sentence)
-            loss = loss_function(tag_scores, target)
-            loss.backward()
-            # if faked:
-            #     optimizer_for_fake.step()
-            # else:
-            optimizer_for_real.step()
-            metrics.add_loss(loss.item())
-            saver(model)
+    for sentence, target, faked in training_dataset:
+        sentence = lang.to_index(sentence)
+        sentence = to_tensor(sentence, dtype=torch.long)
+        target = to_tensor(target, dtype=torch.long)
+        model.zero_grad()
+        model.hidden = model.init_hidden()
+        tag_scores = model.forward(sentence)
+        loss = loss_function(tag_scores, target)
+        loss.backward()
+        # if faked:
+        #     optimizer_for_fake.step()
+        # else:
+        optimizer_for_real.step()
+        metrics.add_loss(loss.item())
+        saver(model)
 
     return model
 
