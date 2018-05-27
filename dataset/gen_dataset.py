@@ -12,7 +12,8 @@ def generate_dataset():
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
-        yield words, tags, faked
+        if len(words) > 1:
+            yield words, tags, faked
 
 
 def generate_tagged_sentences():

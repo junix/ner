@@ -309,5 +309,3 @@ def generate_a_faked_query():
     sentence = noise + h + op + entity.format(keyword=w) + t
     sentence = regularize_punct(sentence)
     return sentence
-
-

@@ -12,6 +12,34 @@ from dataset.lang import Lang
 jieba_dict.init_user_dict()
 
 
+class Metrics:
+    def __init__(self, period=2000):
+        self.loss = .0
+        assert period > 0
+        self.period = int(period)
+        self.acc_count = 0
+
+    def add_loss(self, loss):
+        self.loss += float(loss)
+        self.acc_count += 1
+        if self.acc_count % self.period == 0:
+            print(self.acc_count, '=>', self.loss)
+            self.loss = .0
+
+
+def make_period_save(period):
+    count = 0
+
+    def _saver(model):
+        nonlocal count
+        count += 1
+        if count % period == 0:
+            print('save model')
+            model.save(MODEL_DUMP_FILE)
+
+    return _saver
+
+
 def train(model, dataset, lang):
     model.train()
     training_dataset = dataset
@@ -19,14 +47,13 @@ def train(model, dataset, lang):
     lr = 1e-2
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
-    count, acc_loss = 0, 0.0
+    saver = make_period_save(50000)
+    metrics = Metrics()
     for epoch in range(60):
         for sentence, target, faked in training_dataset:
             sentence = lang.to_index(sentence)
             sentence = to_tensor(sentence, dtype=torch.long)
             target = to_tensor(target, dtype=torch.long)
-            if len(sentence) <= 1:
-                continue
             model.zero_grad()
             model.hidden = model.init_hidden()
             tag_scores = model.forward(sentence)
@@ -36,13 +63,8 @@ def train(model, dataset, lang):
             #     optimizer_for_fake.step()
             # else:
             optimizer_for_real.step()
-            acc_loss += loss.item()
-            count += 1
-            if count % 2000 == 0:
-                print(count, ' => ', float(acc_loss))
-                acc_loss = 0
-            if count % 50000 == 0:
-                model.save(MODEL_DUMP_FILE)
+            metrics.add_loss(loss.item())
+            saver(model)
 
     return model
 
