@@ -40,11 +40,10 @@ def _make_period_saver(period, dump_name):
     return _saver
 
 
-def train(model, dataset, lang, dump_name):
+def do_train(model, dataset, lang, dump_name, lr):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    lr = 1e-4
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
     saver = _make_period_saver(50000, dump_name=dump_name)
@@ -68,7 +67,7 @@ def train(model, dataset, lang, dump_name):
     return model
 
 
-def train_and_dump(from_model=None, skip_sentence=0, model_name='model.pt'):
+def train_and_dump(from_model=None, skip_sentence=0, model_name='model.pt', lr=1e-4):
     dataset = generate_dataset()
     lang = Lang.load()
     if from_model:
@@ -80,4 +79,4 @@ def train_and_dump(from_model=None, skip_sentence=0, model_name='model.pt'):
     for i in range(skip_sentence):
         dataset.send(None)
     dump_name = from_model or model_name or 'model.pt'
-    train(model, dataset, lang, dump_name)
+    do_train(model, dataset, lang, dump_name, lr=lr)
