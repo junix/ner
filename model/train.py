@@ -30,7 +30,7 @@ class Metrics:
             self.loss, self.started_at = .0, self.ended_at
 
     def __str__(self):
-        return '{count}:loss=>{loss},duration={elapsed}s'.format(
+        return '{count}:loss={loss},duration={elapsed}s'.format(
             count=self.acc_count,
             loss=self.loss,
             elapsed=self.ended_at - self.started_at)
