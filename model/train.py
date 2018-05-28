@@ -66,7 +66,7 @@ def do_train(model, dataset, lang, dump_name, lr):
     return model
 
 
-def train_and_dump(from_model=None, new_rnn_type='lstm', drop_n=0, model_name='model.pt', lr=1e-4):
+def train_and_dump(drop_n=0, from_model=None, new_rnn_type='lstm', model_name='model.pt', lr=1e-4):
     lang = Lang.load()
     if from_model:
         model = EntityRecognizer.load(from_model)
