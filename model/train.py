@@ -15,6 +15,7 @@ jieba_dict.init_user_dict()
 class Metrics:
     def __init__(self, period=2000):
         self.started_at = int(time.time())
+        self.ended_at = self.started_at
         self.loss = .0
         assert period > 0
         self.period = int(period)
@@ -23,10 +24,16 @@ class Metrics:
     def add_loss(self, loss):
         self.loss += float(loss)
         self.acc_count += 1
+        self.ended_at = int(time.time())
         if self.acc_count % self.period == 0:
-            ended_at = int(time.time())
-            print(self.acc_count, '=>', self.loss, 'time duration =>', ended_at - self.started_at)
-            self.loss, self.started_at = .0, ended_at
+            print(self)
+            self.loss, self.started_at = .0, self.ended_at
+
+    def __str__(self):
+        return '{count}:loss=>{loss},duration={elapsed}s'.format(
+            count=self.acc_count,
+            loss=self.loss,
+            elapsed=self.ended_at - self.started_at)
 
 
 def _make_period_saver(period, dump_name):
@@ -36,7 +43,7 @@ def _make_period_saver(period, dump_name):
         nonlocal count
         count += 1
         if count % period == 0:
-            print('save model', dump_name)
+            print('save model:', dump_name)
             model.save(dump_name)
 
     return _saver
