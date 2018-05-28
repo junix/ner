@@ -6,8 +6,8 @@ from dataset.fake_dataset import generate_a_faked_yxt_query, \
     generate_a_faked_query
 
 
-def generate_dataset(drop_n=0):
-    for sentence, faked in generate_tagged_sentences():
+def generate_dataset(drop_n=0, real_corpus_sample=0.3):
+    for sentence, faked in generate_tagged_sentences(real_corpus_sample):
         words = [w for w in jieba.cut(sentence) if w]
         tags = list(tagging(words))
         words = [w for w, _ in tags]
@@ -21,8 +21,8 @@ def generate_dataset(drop_n=0):
         yield words, tags, faked
 
 
-def generate_tagged_sentences():
-    corpus_gen = generate_real_tagged_sentence()
+def generate_tagged_sentences(real_corpus_sample):
+    corpus_gen = generate_real_tagged_sentence(real_corpus_sample)
     while True:
         rnd = random.randint(0, 100)
         if rnd < 5:
@@ -46,10 +46,9 @@ def tagging(words):
             yield w, next_mark
 
 
-def generate_real_tagged_sentence():
-    while True:
-        for sentence in gen_real_sentences():
-            yield '<{keyword}>'.format(keyword=sentence)
+def generate_real_tagged_sentence(sample_ratio):
+    for sentence in gen_real_sentences(sample_ratio):
+        yield '<{keyword}>'.format(keyword=sentence)
 
 
 def keyword_of(words, tags):

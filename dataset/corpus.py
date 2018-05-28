@@ -1,11 +1,14 @@
 import re
+import random
+
 from itertools import cycle
 from conf import CORPUS_LIST
 from regularize import regularize_punct
 from utils import join_words2, strip
 
 
-def generate_sentences():
+def generate_sentences(sample_ratio=0.5):
+    assert .0 < sample_ratio < 1.
     while True:
         files = [open(corpus, 'r') for corpus in CORPUS_LIST]
         files_count = len(files)
@@ -20,8 +23,11 @@ def generate_sentences():
                 continue
             cont_empty_line_count = 0
             line = strip(line, '\n\t ')
-            if line:
-                yield from split_to_pieces(line)
+            if not line:
+                continue
+            for piece in split_to_pieces(line):
+                if random.random() <= sample_ratio:
+                    yield piece
 
 
 def _rejoin(sentence):
