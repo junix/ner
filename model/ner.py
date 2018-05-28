@@ -16,12 +16,16 @@ class EntityRecognizer(nn.Module):
         self.num_layers = num_layers
         self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=input_size)
         self.bidirectional = True
-        self.rnn = nn.LSTM(input_size=input_size,
-                           hidden_size=hidden_size,
-                           dropout=0.5,
-                           num_layers=self.num_layers,
-                           bidirectional=self.bidirectional)
-        # self.rnn = nn.GRU(input_size=input_size, hidden_size=hidden_size)
+        # self.rnn = nn.LSTM(input_size=input_size,
+        #                    hidden_size=hidden_size,
+        #                    dropout=0.5,
+        #                    num_layers=self.num_layers,
+        #                    bidirectional=self.bidirectional)
+        self.rnn = nn.GRU(input_size=input_size,
+                          hidden_size=hidden_size,
+                          dropout=0.5,
+                          num_layers=self.num_layers,
+                          bidirectional=self.bidirectional)
         self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
         self.hidden = self.init_hidden()
         self.move_to_device(DEVICE)
@@ -33,11 +37,11 @@ class EntityRecognizer(nn.Module):
             self.cuda()
 
     def init_hidden(self):
-        # return to_var(torch.zeros(self.num_layers, 1, self.hidden_size), self.use_gpu)
-        return (
-            torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE),
-            torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE)
-        )
+        return torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE)
+        # return (
+        #     torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE),
+        #     torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE)
+        # )
 
     def __getitem__(self, words_seq):
         self.hidden = self.init_hidden()
