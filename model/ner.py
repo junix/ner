@@ -8,12 +8,13 @@ from conf import DEVICE, MODEL_ZOO
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, vocab_size, embedding_dim, hidden_size=512, rnn_type='lstm', num_layers=2):
+    def __init__(self, lang, embedding_dim=200, hidden_size=512, rnn_type='lstm', num_layers=2, ):
         super(EntityRecognizer, self).__init__()
         self.hidden_size = hidden_size
         self.input_size = embedding_dim
         self.num_layers = num_layers
-        self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=embedding_dim)
+        self.lang = lang
+        self.embedding = nn.Embedding(num_embeddings=lang.vocab_size(), embedding_dim=embedding_dim)
         self.bidirectional = True
         self.rnn_type = rnn_type
         assert rnn_type in ('lstm', 'gru'), 'un-support rnn type:{}'.format(rnn_type)
@@ -56,6 +57,7 @@ class EntityRecognizer(nn.Module):
 
     def forward(self, words):
         word_len = len(words)
+        words = self.lang.to_index(words)
         words = to_tensor(words, dtype=torch.long)
         words = self.embedding(words)
         words = words.view(word_len, 1, -1)

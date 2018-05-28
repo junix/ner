@@ -5,19 +5,17 @@ import jieba
 from regularize import replace_to_common_words, regularize_punct, remove_stopwords
 from utils import is_ascii_text
 import jieba_dict
-from dataset.lang import Lang
+from model.lang import Lang
 from conf import DEVICE
 from .ner import EntityRecognizer
 
 jieba_dict.init_user_dict()
 
 
-def fetch_tags(model, text, lang):
-    words = list(replace_to_common_words(jieba.cut(text)))
-    sentence = lang.to_index(words)
-
+def fetch_tags(model, text):
+    words = tuple(replace_to_common_words(jieba.cut(text)))
     with torch.no_grad():
-        output = model[sentence]
+        output = model[words]
         _, tags = output.max(dim=1)
         return words, tags.tolist()
 
@@ -31,14 +29,13 @@ def load_model(model_name):
 
 def load_predict(model_name='model.pt', output_keyword=False):
     model = load_model(model_name)
-    lang = Lang.load()
 
     def predict(sentence):
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []
         if not output_keyword:
-            _words, tags = fetch_tags(model, sentence, lang)
+            _words, tags = fetch_tags(model, sentence)
             return tags
         if is_ascii_text(sentence):
             return '', sentence
@@ -46,7 +43,7 @@ def load_predict(model_name='model.pt', output_keyword=False):
         old_category, old_keywords = '', ''
         all_words = []
         for sub_sentence in sub_sentences:
-            words, tags = fetch_tags(model, sub_sentence, lang)
+            words, tags = fetch_tags(model, sub_sentence)
             category, keywords = select_keywords(words, tags)
             if len(old_category) < len(category):
                 old_category = category

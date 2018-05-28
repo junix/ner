@@ -1,4 +1,4 @@
-from conf import LANG_PT_FILE
+from conf import MODEL_ZOO
 
 
 class Lang:
@@ -26,13 +26,15 @@ class Lang:
             return self.word2index.get(words, Lang.NIL_INDEX)
         raise TypeError('idx only support list,tuple,str,but found:{}'.format(words))
 
-    def dump(self, file=LANG_PT_FILE):
+    def dump(self, name='lang.pt'):
         import pickle
+        file = MODEL_ZOO + '/' + name
         with open(file, 'wb') as f:
             pickle.dump(self, f)
 
     @classmethod
-    def load(cls, file=LANG_PT_FILE):
+    def load(cls, name='lang.pt'):
         import pickle
+        file = MODEL_ZOO + '/' + name
         with open(file, 'rb') as f:
             return pickle.load(f)
