@@ -1,3 +1,4 @@
+import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -13,6 +14,7 @@ jieba_dict.init_user_dict()
 
 class Metrics:
     def __init__(self, period=2000):
+        self.started_at = int(time.time())
         self.loss = .0
         assert period > 0
         self.period = int(period)
@@ -22,8 +24,9 @@ class Metrics:
         self.loss += float(loss)
         self.acc_count += 1
         if self.acc_count % self.period == 0:
-            print(self.acc_count, '=>', self.loss)
-            self.loss = .0
+            ended_at = int(time.time())
+            print(self.acc_count, '=>', self.loss, 'time duration =>', ended_at - self.started_at)
+            self.loss, self.started_at = .0, ended_at
 
 
 def _make_period_saver(period, dump_name):
