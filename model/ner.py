@@ -8,23 +8,28 @@ from conf import DEVICE, MODEL_ZOO
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, input_size, vocab_size, num_layers=2, hidden_size=512):
+    def __init__(self, vocab_size, embedding_dim, hidden_size=512, rnn_type='lstm', num_layers=2):
         super(EntityRecognizer, self).__init__()
         self.hidden_size = hidden_size
-        self.input_size = input_size
+        self.input_size = embedding_dim
         self.num_layers = num_layers
-        self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=input_size)
+        self.embedding = nn.Embedding(num_embeddings=vocab_size, embedding_dim=embedding_dim)
         self.bidirectional = True
-        # self.rnn = nn.LSTM(input_size=input_size,
-        #                    hidden_size=hidden_size,
-        #                    dropout=0.5,
-        #                    num_layers=self.num_layers,
-        #                    bidirectional=self.bidirectional)
-        self.rnn = nn.GRU(input_size=input_size,
-                          hidden_size=hidden_size,
-                          dropout=0.5,
-                          num_layers=self.num_layers,
-                          bidirectional=self.bidirectional)
+        self.rnn_type = rnn_type
+        assert rnn_type in ('lstm', 'gru'), 'un-support rnn type:{}'.format(rnn_type)
+        if self.rnn_type == 'lstm':
+            self.rnn = nn.LSTM(input_size=embedding_dim,
+                               hidden_size=hidden_size,
+                               dropout=0.5,
+                               num_layers=self.num_layers,
+                               bidirectional=self.bidirectional)
+        elif self.rnn_type == 'gru':
+            self.rnn = nn.GRU(input_size=embedding_dim,
+                              hidden_size=hidden_size,
+                              dropout=0.5,
+                              num_layers=self.num_layers,
+                              bidirectional=self.bidirectional)
+
         self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
         self.hidden = self.init_hidden()
         self.move_to_device(DEVICE)
@@ -36,11 +41,14 @@ class EntityRecognizer(nn.Module):
             self.cuda()
 
     def init_hidden(self):
-        return torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE)
-        # return (
-        #     torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE),
-        #     torch.zeros(self.num_layers * 2 if self.bidirectional else 1, 1, self.hidden_size, device=DEVICE)
-        # )
+        bidirect = 2 if self.bidirectional else 1
+        if self.rnn_type == 'lstm':
+            return (
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE),
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE)
+            )
+        elif self.rnn_type == 'gru':
+            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE)
 
     def __getitem__(self, words_seq):
         self.hidden = self.init_hidden()

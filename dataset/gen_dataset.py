@@ -6,14 +6,19 @@ from dataset.fake_dataset import generate_a_faked_yxt_query, \
     generate_a_faked_query
 
 
-def generate_dataset():
+def generate_dataset(drop_n=0):
     for sentence, faked in generate_tagged_sentences():
         words = [w for w in jieba.cut(sentence) if w]
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
-        if len(words) > 1:
-            yield words, tags, faked
+        if not words:
+            continue
+        if drop_n > 0:
+            drop_n -= 1
+            continue
+
+        yield words, tags, faked
 
 
 def generate_tagged_sentences():
