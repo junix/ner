@@ -4,10 +4,10 @@ import torch.optim as optim
 
 import jieba_dict
 from conf import DEVICE
+from conf import MODEL_ZOO, DEFAULT_MODEL_PT_NAME
 from dataset import generate_dataset
-from .ner import EntityRecognizer, to_tensor
-from conf import MODEL_DUMP_FILE
 from dataset.lang import Lang
+from .ner import EntityRecognizer, to_tensor
 
 jieba_dict.init_user_dict()
 
@@ -27,27 +27,27 @@ class Metrics:
             self.loss = .0
 
 
-def _make_period_saver(period):
+def _make_period_saver(period, dump_name):
     count = 0
 
     def _saver(model):
         nonlocal count
         count += 1
         if count % period == 0:
-            print('save model')
-            model.save(MODEL_DUMP_FILE)
+            print('save model', dump_name)
+            model.save(dump_name)
 
     return _saver
 
 
-def train(model, dataset, lang):
+def train(model, dataset, lang, dump_name):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
     lr = 1e-4
     optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
     # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
-    saver = _make_period_saver(50000)
+    saver = _make_period_saver(50000, dump_name=dump_name)
     metrics = Metrics()
     for sentence, target, faked in training_dataset:
         sentence = lang.to_index(sentence)
@@ -68,21 +68,16 @@ def train(model, dataset, lang):
     return model
 
 
-def train_and_dump(load_old=False, skip_sentence=0):
+def train_and_dump(from_model=None, skip_sentence=0, model_name='model.pt'):
     dataset = generate_dataset()
     lang = Lang.load()
-    if load_old:
-        model = torch.load(MODEL_DUMP_FILE)
+    if from_model:
+        model = EntityRecognizer.load(from_model)
     else:
         model = EntityRecognizer(input_size=200, vocab_size=lang.vocab_size())
         model.init_params()
     model.move_to_device(DEVICE)
     for i in range(skip_sentence):
         dataset.send(None)
-    train(model, dataset, lang)
-
-
-def detect_input_shape(dataset):
-    for x, _ in dataset:
-        return x.shape[-1]
-    raise ValueError('empty dataset')
+    dump_name = from_model or model_name or 'model.pt'
+    train(model, dataset, lang, dump_name)

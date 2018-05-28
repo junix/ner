@@ -3,8 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import jieba_dict
-from conf import DEVICE
+from conf import DEVICE, MODEL_ZOO
 
 
 class EntityRecognizer(nn.Module):
@@ -57,8 +56,14 @@ class EntityRecognizer(nn.Module):
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores
 
-    def save(self, file):
-        torch.save(self, file)
+    def save(self, name):
+        path = MODEL_ZOO + '/' + name
+        torch.save(self, path)
+
+    @classmethod
+    def load(cls, name):
+        path = MODEL_ZOO + '/' + name
+        return torch.load(path, map_location=lambda storage, loc: storage)
 
     def params_without_embed(self):
         for name, param in self.named_parameters():

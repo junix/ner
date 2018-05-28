@@ -6,6 +6,8 @@ from regularize import replace_to_common_words, regularize_punct, remove_stopwor
 from utils import is_ascii_text
 import jieba_dict
 from dataset.lang import Lang
+from conf import DEVICE
+from .ner import EntityRecognizer
 
 jieba_dict.init_user_dict()
 
@@ -20,16 +22,15 @@ def fetch_tags(model, text, lang):
         return words, tags.tolist()
 
 
-def load_model():
-    from conf import DEVICE, MODEL_DUMP_FILE
-    model = torch.load(MODEL_DUMP_FILE, map_location=lambda storage, loc: storage)
+def load_model(model_name):
+    model = EntityRecognizer.load(model_name)
     model.eval()
     model.move_to_device(DEVICE)
     return model
 
 
-def load_predict(output_keyword=False):
-    model = load_model()
+def load_predict(model_name='model.pt', output_keyword=False):
+    model = load_model(model_name)
     lang = Lang.load()
 
     def predict(sentence):
