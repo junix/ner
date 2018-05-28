@@ -66,14 +66,15 @@ def do_train(model, dataset, lang, dump_name, lr):
     return model
 
 
-def train_and_dump(drop_n=0, from_model=None, new_rnn_type='lstm', model_name='model.pt', lr=1e-4):
+def train_and_dump(drop_n=0, from_model=None, new_rnn_type='lstm', lr=1e-4):
     lang = Lang.load()
     if from_model:
         model = EntityRecognizer.load(from_model)
+        dump_model_name = from_model
     else:
         model = EntityRecognizer(vocab_size=lang.vocab_size(), embedding_dim=200, rnn_type=new_rnn_type)
         model.init_params()
+        dump_model_name = 'model.{rnn_type}'.format(rnn_type=new_rnn_type)
     model.move_to_device(DEVICE)
     dataset = generate_dataset(drop_n=drop_n)
-    dump_name = from_model or model_name or 'model.pt'
-    do_train(model, dataset, lang, dump_name, lr=lr)
+    do_train(model, dataset, lang, dump_model_name, lr=lr)
