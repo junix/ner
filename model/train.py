@@ -4,7 +4,6 @@ import torch.optim as optim
 
 import jieba_dict
 from conf import DEVICE
-from conf import MODEL_ZOO, DEFAULT_MODEL_PT_NAME
 from dataset import generate_dataset
 from dataset.lang import Lang
 from .ner import EntityRecognizer, to_tensor
