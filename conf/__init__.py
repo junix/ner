@@ -20,7 +20,7 @@ MODEL_DUMP_FILE = MODEL_PERSIST_DIR + '/model.dump'
 
 CORPUS_LIST = (
     '/home/wanglijun/corpus/std_zh_wiki',
-    '/home/wanglijun/corpus/corpus.txt',
+    # '/home/wanglijun/corpus/corpus.txt',
 )
 
 

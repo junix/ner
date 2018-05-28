@@ -6,14 +6,22 @@ from utils import join_words2, strip
 
 
 def generate_sentences():
-    files = [open(corpus, 'r') for corpus in CORPUS_LIST]
-    assert len(files) > 0, "no "
-    for file in cycle(files):
-        line = file.readline()
-        line = strip(line, '\n\t ')
-        if not line:
-            continue
-        yield from split_to_pieces(line)
+    while True:
+        files = [open(corpus, 'r') for corpus in CORPUS_LIST]
+        files_count = len(files)
+        assert len(files) > 0, "no "
+        cont_empty_line_count = 0
+        for file in cycle(files):
+            line = file.readline()
+            if not line:
+                cont_empty_line_count += 1
+                if cont_empty_line_count > files_count * 2:
+                    break
+                continue
+            cont_empty_line_count = 0
+            line = strip(line, '\n\t ')
+            if line:
+                yield from split_to_pieces(line)
 
 
 def _rejoin(sentence):
