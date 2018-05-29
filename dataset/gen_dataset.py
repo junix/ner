@@ -21,7 +21,7 @@ def generate_tagged_sentences(real_corpus_sample):
     while True:
         rnd = random.randint(0, 1000)
         if rnd < 2:
-            yield generate_a_special_query()
+            yield generate_a_special_query(), True
         elif rnd < 50:
             yield generate_a_faked_yxt_query(), True
         elif rnd < 500:
