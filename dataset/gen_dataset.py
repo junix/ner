@@ -6,7 +6,7 @@ from dataset.fake_dataset import generate_a_faked_yxt_query, \
     generate_a_faked_query
 
 
-def generate_dataset(real_corpus_sample=0.3):
+def generate_dataset(real_corpus_sample=0.1):
     for sentence, faked in generate_tagged_sentences(real_corpus_sample):
         words = [w for w in jieba.cut(sentence) if w]
         tags = list(tagging(words))
