@@ -44,8 +44,8 @@ def _make_period_saver(period, dump_name):
         nonlocal count
         count += 1
         if count % period == 0:
-            print('save model:', dump_name)
             model.save(dump_name)
+            print('save model:', dump_name)
 
     return _saver
 
