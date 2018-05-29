@@ -99,6 +99,6 @@ def train_and_dump(from_model=None,
         model = EntityRecognizer(lang=Lang.load(lang_pkl), embedding_dim=200, rnn_type=rnn_type)
         model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
-    model.move_to_device(conf.DEVICE)
+    model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
     do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)

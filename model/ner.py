@@ -33,7 +33,7 @@ class EntityRecognizer(nn.Module):
 
         self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
         self.hidden = self.init_hidden()
-        self.move_to_device(conf.DEVICE)
+        self.move_to_device(conf.device())
 
     def move_to_device(self, device):
         if device.type == 'cpu':
@@ -45,11 +45,11 @@ class EntityRecognizer(nn.Module):
         bidirect = 2 if self.bidirectional else 1
         if self.rnn_type == 'lstm':
             return (
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE),
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE)
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device()),
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device())
             )
         elif self.rnn_type == 'gru':
-            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE)
+            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device())
 
     def __getitem__(self, words_seq):
         self.hidden = self.init_hidden()
@@ -90,10 +90,10 @@ class EntityRecognizer(nn.Module):
 
 def to_tensor(value, dtype=torch.float32):
     if torch.is_tensor(value):
-        return value.to(conf.DEVICE, dtype=dtype)
+        return value.to(conf.device(), dtype=dtype)
     if isinstance(value, (list, tuple, np.ndarray)):
-        return torch.tensor(value, dtype=dtype, device=conf.DEVICE)
+        return torch.tensor(value, dtype=dtype, device=conf.device())
     if isinstance(value, (float, np.float16, np.float32, np.float64)):
-        return torch.tensor([value], dtype=dtype, device=conf.DEVICE)
+        return torch.tensor([value], dtype=dtype, device=conf.device())
 
     raise ValueError("Fail to convert {elem} to tensor".format(elem=value))
