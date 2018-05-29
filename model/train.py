@@ -67,7 +67,7 @@ def do_train(model, dataset, dump_name, optimizer, lr):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    optimizer = _make_optimizer(params=model.parameters(), optimizer_name=optimizer, lr=lr)
+    optimizer = _make_optimizer(optimizer_name=optimizer, params=model.parameters(), lr=lr)
     saver = _make_period_saver(50000, dump_name=dump_name)
     metrics = Metrics()
     for sentence, target, faked in training_dataset:
