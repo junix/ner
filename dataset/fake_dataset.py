@@ -63,7 +63,16 @@ pleases = (
 )
 
 search_op_advs = (
+    "下",
     "一下",
+    "个",
+    "一个",
+    "点",
+    "一点",
+    "点儿",
+    "些",
+    "一些",
+    "些儿",
 )
 
 
@@ -309,3 +318,15 @@ def generate_a_faked_query():
     sentence = noise + h + op + entity.format(keyword=w) + t
     sentence = regularize_punct(sentence)
     return sentence
+
+
+special_query_patterns = (
+    '{keyword}有哪些类别',
+    '{keyword}包括哪些类别',
+    '{keyword}是什么样子的',
+)
+
+
+def generate_a_special_query():
+    pattern = random.choice(special_query_patterns)
+    return pattern.format(keyword=fake_piece(min_word_cnt=1, max_word_cnt=4, with_punct=False))
