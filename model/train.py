@@ -66,7 +66,7 @@ def _make_optimizer(optimizer_name, params, lr):
 def do_train(model, dataset, dump_name, optimizer, lr):
     model.train()
     training_dataset = dataset
-    loss_function = nn.NLLLoss()
+    criterion = nn.NLLLoss()
     optimizer = _make_optimizer(optimizer_name=optimizer, params=model.parameters(), lr=lr)
     saver = _make_period_saver(50000, dump_name=dump_name)
     metrics = Metrics()
@@ -75,16 +75,23 @@ def do_train(model, dataset, dump_name, optimizer, lr):
         model.zero_grad()
         model.hidden = model.init_hidden()
         tag_scores = model.forward(sentence)
-        loss = loss_function(tag_scores, target)
+        loss = criterion(tag_scores, target)
         loss.backward()
         optimizer.step()
+
         metrics.add_loss(loss.item())
         saver(model)
 
     return model
 
 
-def train_and_dump(from_model=None, optimizer='sgd', lr=1e-4, rnn_type='lstm', lang_pkl='lang.pt', drop_n=0):
+def train_and_dump(from_model=None,
+                   optimizer='sgd',
+                   lr=1e-4,
+                   rnn_type='lstm',
+                   lang_pkl='lang.pt',
+                   drop_n=0,
+                   real_corpus_sample=0.3):
     if from_model:
         model = EntityRecognizer.load(from_model)
         model_pkl_name = from_model
@@ -93,5 +100,5 @@ def train_and_dump(from_model=None, optimizer='sgd', lr=1e-4, rnn_type='lstm', l
         model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(DEVICE)
-    dataset = islice(generate_dataset(), drop_n, None)
+    dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
     do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)

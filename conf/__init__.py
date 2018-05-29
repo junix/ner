@@ -7,12 +7,16 @@ import os
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-GENSIM_MODEL_PATH = "/data/word2vec_models/200/model.bin"
 
-word2vec_rpc_servers = (
-    ('localhost', 9191),
-    ('localhost', 9190),
-)
+def use_cpu():
+    global DEVICE
+    DEVICE = torch.device('cpu')
+
+
+def use_cuda():
+    global DEVICE
+    DEVICE = torch.device('cuda')
+
 
 MODEL_ZOO = os.path.dirname(__file__) + '/../model_zoo'
 LANG_PT_FILE = MODEL_ZOO + '/lang.pt'
@@ -23,5 +27,3 @@ CORPUS_LIST = (
     '/home/wanglijun/corpus/std_zh_wiki',
     # '/home/wanglijun/corpus/corpus.txt',
 )
-
-
