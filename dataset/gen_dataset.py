@@ -3,7 +3,7 @@ import random
 
 from dataset.corpus import generate_sentences as gen_real_sentences
 from dataset.fake_dataset import generate_a_faked_yxt_query, \
-    generate_a_faked_query, generate_a_special_query
+    generate_a_faked_query
 
 
 def generate_dataset(real_corpus_sample=0.3):
@@ -19,12 +19,10 @@ def generate_dataset(real_corpus_sample=0.3):
 def generate_tagged_sentences(real_corpus_sample):
     corpus_gen = generate_real_tagged_sentence(real_corpus_sample)
     while True:
-        rnd = random.randint(0, 1000)
+        rnd = random.randint(0, 100)
         if rnd < 2:
-            yield generate_a_special_query(), True
-        elif rnd < 50:
             yield generate_a_faked_yxt_query(), True
-        elif rnd < 500:
+        elif rnd < 50:
             yield corpus_gen.send(None), False
         else:
             yield generate_a_faked_query(), True

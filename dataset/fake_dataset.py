@@ -297,6 +297,14 @@ def generate_a_faked_yxt_query():
 
 
 def generate_a_faked_query():
+    rnd = random.randint(0, 1000)
+    if rnd < 3:
+        return generate_a_special_query()
+    else:
+        return generate_a_general_faked_query()
+
+
+def generate_a_general_faked_query():
     ws = _all_words
     w = fake_piece(min_word_cnt=1, max_word_cnt=3, with_punct=False)
     h = make_hello()
