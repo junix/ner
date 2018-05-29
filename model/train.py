@@ -1,4 +1,5 @@
 import time
+from itertools import islice
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -49,12 +50,24 @@ def _make_period_saver(period, dump_name):
     return _saver
 
 
-def do_train(model, dataset, dump_name, lr):
+def _make_optimizer(optimizer_name, params, lr):
+    if optimizer_name == 'sgd':
+        return optim.SGD(params=params, lr=lr)
+    elif optimizer_name == 'adam':
+        return optim.Adam(params=params, lr=lr)
+    elif optimizer_name == 'rmsprop':
+        return optim.RMSprop(params=params, lr=lr)
+    elif optimizer_name == 'adagrad':
+        return optim.Adagrad(params=params, lr=lr)
+    else:
+        raise ValueError('not support optimizer:{}'.format(optimizer_name))
+
+
+def do_train(model, dataset, dump_name, optimizer, lr):
     model.train()
     training_dataset = dataset
     loss_function = nn.NLLLoss()
-    optimizer_for_real = optim.SGD(model.parameters(), lr=lr)
-    # optimizer_for_fake = optim.SGD(model.params_without_embed(), lr=lr)
+    optimizer = _make_optimizer(params=model.parameters(), optimizer_name=optimizer, lr=lr)
     saver = _make_period_saver(50000, dump_name=dump_name)
     metrics = Metrics()
     for sentence, target, faked in training_dataset:
@@ -64,25 +77,21 @@ def do_train(model, dataset, dump_name, lr):
         tag_scores = model.forward(sentence)
         loss = loss_function(tag_scores, target)
         loss.backward()
-        # if faked:
-        #     optimizer_for_fake.step()
-        # else:
-        optimizer_for_real.step()
+        optimizer.step()
         metrics.add_loss(loss.item())
         saver(model)
 
     return model
 
 
-def train_and_dump(drop_n=0, from_model=None, new_rnn_type='lstm', lr=1e-4, lang_name='lang.pt'):
+def train_and_dump(from_model=None, optimizer='sgd', lr=1e-4, rnn_type='lstm', lang_pkl='lang.pt', drop_n=0):
     if from_model:
         model = EntityRecognizer.load(from_model)
-        dump_model_name = from_model
+        model_pkl_name = from_model
     else:
-        lang = Lang.load(lang_name)
-        model = EntityRecognizer(lang=lang, embedding_dim=200, rnn_type=new_rnn_type)
+        model = EntityRecognizer(lang=Lang.load(lang_pkl), embedding_dim=200, rnn_type=rnn_type)
         model.init_params()
-        dump_model_name = 'model.{rnn_type}'.format(rnn_type=new_rnn_type)
+        model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(DEVICE)
-    dataset = generate_dataset(drop_n=drop_n)
-    do_train(model, dataset, dump_model_name, lr=lr)
+    dataset = islice(generate_dataset(), drop_n, None)
+    do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)
