@@ -63,7 +63,7 @@ def _make_optimizer(optimizer_name, params, lr):
         raise ValueError('not support optimizer:{}'.format(optimizer_name))
 
 
-def do_train(model, dataset, model_pkl_name, optimizer, lr):
+def _do_train(model, dataset, model_pkl_name, optimizer, lr):
     model.train()
     training_dataset = dataset
     criterion = nn.NLLLoss()
@@ -102,4 +102,4 @@ def train_and_dump(from_model=None,
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
-    do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)
+    _do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)
