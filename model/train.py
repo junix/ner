@@ -37,15 +37,15 @@ class Metrics:
             elapsed=self.ended_at - self.started_at)
 
 
-def _make_period_saver(period, dump_name):
+def _make_period_saver(period, pkl_name):
     count = 0
 
     def _saver(model):
         nonlocal count
         count += 1
         if count % period == 0:
-            model.save(dump_name)
-            print('save model:', dump_name)
+            model.save(pkl_name)
+            print('save model:', pkl_name)
 
     return _saver
 
@@ -63,12 +63,12 @@ def _make_optimizer(optimizer_name, params, lr):
         raise ValueError('not support optimizer:{}'.format(optimizer_name))
 
 
-def do_train(model, dataset, dump_name, optimizer, lr):
+def do_train(model, dataset, model_pkl_name, optimizer, lr):
     model.train()
     training_dataset = dataset
     criterion = nn.NLLLoss()
     optimizer = _make_optimizer(optimizer_name=optimizer, params=model.parameters(), lr=lr)
-    saver = _make_period_saver(50000, dump_name=dump_name)
+    saver = _make_period_saver(50000, pkl_name=model_pkl_name)
     metrics = Metrics()
     for sentence, target, faked in training_dataset:
         target = to_tensor(target, dtype=torch.long)

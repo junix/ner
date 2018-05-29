@@ -67,13 +67,11 @@ class EntityRecognizer(nn.Module):
         return tag_scores
 
     def save(self, name):
-        path = conf.MODEL_ZOO + '/' + name
-        torch.save(self, path)
+        torch.save(self, conf.path_in_zoo(name))
 
     @classmethod
     def load(cls, name):
-        path = conf.MODEL_ZOO + '/' + name
-        return torch.load(path, map_location=lambda storage, loc: storage)
+        return torch.load(conf.path_in_zoo(name), map_location=lambda storage, loc: storage)
 
     def params_without_embed(self):
         for name, param in self.named_parameters():

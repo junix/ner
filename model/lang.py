@@ -1,4 +1,5 @@
-from conf import MODEL_ZOO
+import pickle
+import conf
 
 
 class Lang:
@@ -27,14 +28,10 @@ class Lang:
         raise TypeError('idx only support list,tuple,str,but found:{}'.format(words))
 
     def dump(self, name='lang.pt'):
-        import pickle
-        file = MODEL_ZOO + '/' + name
-        with open(file, 'wb') as f:
+        with open(conf.path_in_zoo(name), 'wb') as f:
             pickle.dump(self, f)
 
     @classmethod
     def load(cls, name='lang.pt'):
-        import pickle
-        file = MODEL_ZOO + '/' + name
-        with open(file, 'rb') as f:
+        with open(conf.path_in_zoo(name), 'rb') as f:
             return pickle.load(f)
