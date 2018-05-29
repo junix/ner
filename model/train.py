@@ -79,6 +79,7 @@ def do_train(model, dataset, model_pkl_name, optimizer, lr):
         loss.backward()
         optimizer.step()
 
+        loss.detach_()
         metrics.add_loss(loss.item())
         saver(model)
 
