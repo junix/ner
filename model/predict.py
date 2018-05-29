@@ -5,8 +5,7 @@ import jieba
 from regularize import replace_to_common_words, regularize_punct, remove_stopwords
 from utils import is_ascii_text
 import jieba_dict
-from model.lang import Lang
-from conf import DEVICE
+import conf
 from .ner import EntityRecognizer
 
 jieba_dict.init_user_dict()
@@ -23,7 +22,7 @@ def fetch_tags(model, text):
 def load_model(model_name):
     model = EntityRecognizer.load(model_name)
     model.eval()
-    model.move_to_device(DEVICE)
+    model.move_to_device(conf.DEVICE)
     return model
 
 

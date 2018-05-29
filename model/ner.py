@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from conf import DEVICE, MODEL_ZOO
+import conf
 
 
 class EntityRecognizer(nn.Module):
@@ -33,7 +33,7 @@ class EntityRecognizer(nn.Module):
 
         self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
         self.hidden = self.init_hidden()
-        self.move_to_device(DEVICE)
+        self.move_to_device(conf.DEVICE)
 
     def move_to_device(self, device):
         if device.type == 'cpu':
@@ -45,11 +45,11 @@ class EntityRecognizer(nn.Module):
         bidirect = 2 if self.bidirectional else 1
         if self.rnn_type == 'lstm':
             return (
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE),
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE)
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE),
+                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE)
             )
         elif self.rnn_type == 'gru':
-            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=DEVICE)
+            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.DEVICE)
 
     def __getitem__(self, words_seq):
         self.hidden = self.init_hidden()
@@ -67,12 +67,12 @@ class EntityRecognizer(nn.Module):
         return tag_scores
 
     def save(self, name):
-        path = MODEL_ZOO + '/' + name
+        path = conf.MODEL_ZOO + '/' + name
         torch.save(self, path)
 
     @classmethod
     def load(cls, name):
-        path = MODEL_ZOO + '/' + name
+        path = conf.MODEL_ZOO + '/' + name
         return torch.load(path, map_location=lambda storage, loc: storage)
 
     def params_without_embed(self):
@@ -90,10 +90,10 @@ class EntityRecognizer(nn.Module):
 
 def to_tensor(value, dtype=torch.float32):
     if torch.is_tensor(value):
-        return value.to(DEVICE, dtype=dtype)
+        return value.to(conf.DEVICE, dtype=dtype)
     if isinstance(value, (list, tuple, np.ndarray)):
-        return torch.tensor(value, dtype=dtype, device=DEVICE)
+        return torch.tensor(value, dtype=dtype, device=conf.DEVICE)
     if isinstance(value, (float, np.float16, np.float32, np.float64)):
-        return torch.tensor([value], dtype=dtype, device=DEVICE)
+        return torch.tensor([value], dtype=dtype, device=conf.DEVICE)
 
     raise ValueError("Fail to convert {elem} to tensor".format(elem=value))
