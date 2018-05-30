@@ -1,10 +1,9 @@
 import re
 import random
 
+from yxt_nlp.utils import regularize_punct, join_words
 from itertools import cycle
 from conf import CORPUS_LIST
-from regularize import regularize_punct
-from utils import join_words2, strip
 
 
 def generate_sentences(sample_ratio=0.5):
@@ -22,7 +21,7 @@ def generate_sentences(sample_ratio=0.5):
                     break
                 continue
             cont_empty_line_count = 0
-            line = strip(line, '\n\t ')
+            line = line.strip('\n\t ')
             if not line:
                 continue
             for piece in split_to_pieces(line):
@@ -34,7 +33,7 @@ def _rejoin(sentence):
     if not sentence:
         return sentence
     words = sentence.split(' ')
-    return join_words2(words)
+    return join_words(words)
 
 
 def split_to_pieces(text):

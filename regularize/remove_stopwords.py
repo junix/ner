@@ -1,6 +1,6 @@
 def remove_stopwords(words):
     import jieba
-    from jieba_dict import is_stopword
+    from yxt_nlp.utils import is_stopword
     from itertools import dropwhile
     if isinstance(words, (list, tuple)):
         words.reverse()

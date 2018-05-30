@@ -4,14 +4,14 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from yxt_nlp.utils import jieba_load_userdict
 from yxt_nlp.common import Lang
 
-import jieba_dict
 import conf
 from dataset import generate_dataset
 from .ner import EntityRecognizer, to_tensor
 
-jieba_dict.init_user_dict()
+jieba_load_userdict()
 
 
 class Metrics:

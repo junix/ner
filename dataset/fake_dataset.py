@@ -2,15 +2,14 @@ import os
 import random
 import re
 
-import jieba_dict
-from regularize import regularize_punct
+from yxt_nlp.utils import jieba_load_userdict, regularize_punct
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
 _yxt_tags = _current_dir + '/' + 'tags.txt'
 _yxt_titles = _current_dir + '/' + 'titles.txt'
 
-jieba_dict.init_user_dict()
+jieba_load_userdict()
 
 search_ops = (
     '{please}找{adv}',

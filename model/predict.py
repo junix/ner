@@ -3,13 +3,13 @@ import re
 import torch
 import jieba
 
-from regularize import replace_to_common_words, regularize_punct, remove_stopwords
-from utils import is_ascii_text
-import jieba_dict
+from yxt_nlp.utils import jieba_load_userdict, is_ascii_text, regularize_punct
+
+from regularize import replace_to_common_words, remove_stopwords
 import conf
 from .ner import EntityRecognizer
 
-jieba_dict.init_user_dict()
+jieba_load_userdict()
 
 
 def fetch_tags(model, text):
@@ -39,7 +39,7 @@ def load_predict(model_name='model.pt', output_keyword=False):
             return tags
         if is_ascii_text(sentence):
             return '', sentence
-        sub_sentences = re.split('[,.!?]', sentence)
+        sub_sentences = re.split('[,.。;!?]', sentence)
         old_category, old_keywords = '', ''
         all_words = []
         for sub_sentence in sub_sentences:
