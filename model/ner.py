@@ -14,7 +14,7 @@ class EntityRecognizer(nn.Module):
         self.input_size = embedding_dim
         self.num_layers = num_layers
         self.lang = lang
-        self.embedding = nn.Embedding(num_embeddings=lang.vocab_size(), embedding_dim=embedding_dim)
+        self.embedding = nn.Embedding(num_embeddings=lang.vocab_size, embedding_dim=embedding_dim)
         self.bidirectional = True
         self.rnn_type = rnn_type
         assert rnn_type in ('lstm', 'gru'), 'un-support rnn type:{}'.format(rnn_type)
