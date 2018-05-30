@@ -57,7 +57,7 @@ class EntityRecognizer(nn.Module):
 
     def forward(self, words):
         word_len = len(words)
-        words = self.lang.to_index(words)
+        words = tuple(self.lang.ix(w) for w in words)
         words = to_tensor(words, dtype=torch.long)
         words = self.embedding(words)
         words = words.view(word_len, 1, -1)

@@ -3,3 +3,4 @@ flask-cors==3.0.3
 torch==0.4.0
 numpy
 jieba
+yxt_nlp

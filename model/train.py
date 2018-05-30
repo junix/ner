@@ -97,7 +97,8 @@ def train_and_dump(from_model=None,
         model = EntityRecognizer.load(from_model)
         model_pkl_name = from_model
     else:
-        model = EntityRecognizer(lang=Lang.load(lang_pkl), embedding_dim=200, rnn_type=rnn_type)
+        lang = Lang.load(conf.path_in_zoo(lang_pkl))
+        model = EntityRecognizer(lang=lang, embedding_dim=200, rnn_type=rnn_type)
         model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(conf.device())
