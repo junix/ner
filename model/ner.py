@@ -78,12 +78,17 @@ class EntityRecognizer(nn.Module):
             if 'embedding' not in name:
                 yield param
 
-    def init_params(self):
+    def init_params(self, pre_trained_wv=None):
         for name, param in self.named_parameters():
             if 'bias' in name:
                 nn.init.constant_(param, 0.0)
             elif 'weight' in name:
                 nn.init.xavier_normal_(param)
+        if pre_trained_wv is not None:
+            device = self.embedding.weight.device
+            wv_weight = self.embedding.weight.detach().numpy()
+            self.lang.build_embedding(wv=pre_trained_wv, out_embedding=wv_weight)
+            self.embedding.weight.data = torch.tensor(wv_weight, dtype=torch.float, device=device)
 
 
 def to_tensor(value, dtype=torch.float32):

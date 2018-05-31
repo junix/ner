@@ -6,6 +6,7 @@ import torch.optim as optim
 
 from yxt_nlp.utils import jieba_load_userdict
 from yxt_nlp.common import Lang
+from yxt_nlp.embedding.glove import WordEmbedding
 
 import conf
 from dataset import generate_dataset
@@ -100,7 +101,8 @@ def train_and_dump(from_model=None,
     else:
         lang = Lang.load(conf.path_in_zoo(lang_pkl))
         model = EntityRecognizer(lang=lang, embedding_dim=200, rnn_type=rnn_type)
-        model.init_params()
+        wv = WordEmbedding('/home/wanglijun/word2vec_models/glove.200d.txt')
+        model.init_params(pre_trained_wv=wv)
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
