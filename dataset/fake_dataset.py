@@ -280,7 +280,7 @@ def make_hello():
     if random.randint(0, 10) <= 9:
         return ""
     h = random.choice(hellos)
-    if h and random.randint(0, 10) <= 5:
+    if h and random.randint(0, 10) <= 1:
         h += random.choice(puncts)
     return h
 
@@ -318,7 +318,7 @@ def generate_a_general_faked_query():
     noise = ""
     if search_ops and random.randint(0, 10) <= 4:
         noise = fake_piece(max_word_cnt=2)
-        if random.randint(0, 5) <= 1:
+        if random.randint(0, 100) <= 2:
             noise += random.choice(puncts)
 
     sentence = noise + h + op + entity.format(keyword=w) + t
