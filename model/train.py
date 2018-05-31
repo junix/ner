@@ -69,7 +69,7 @@ def _do_train(model, dataset, model_pkl_name, optimizer, lr):
     model.train()
     training_dataset = dataset
     criterion = nn.NLLLoss()
-    optimizer = _make_optimizer(optimizer_name=optimizer, params=model.params_without_embed(), lr=lr)
+    optimizer = _make_optimizer(optimizer_name=optimizer, params=model.parameters(), lr=lr)
     saver = _make_period_saver(50000, pkl_name=model_pkl_name)
     metrics = Metrics()
     for sentence, target, faked in training_dataset:
@@ -101,8 +101,9 @@ def train_and_dump(from_model=None,
     else:
         lang = Lang.load(conf.path_in_zoo(lang_pkl))
         model = EntityRecognizer(lang=lang, embedding_dim=200, rnn_type=rnn_type)
-        wv = WordEmbedding('/home/wanglijun/word2vec_models/glove.200d.txt')
-        model.init_params(pre_trained_wv=wv)
+        # wv = WordEmbedding('/home/wanglijun/word2vec_models/glove.200d.txt')
+        # model.init_params(pre_trained_wv=wv)
+        model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
