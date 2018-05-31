@@ -3,13 +3,11 @@ import re
 import torch
 import jieba
 
-from yxt_nlp.utils import jieba_load_userdict, is_ascii_text, regularize_punct
-
+from yxt_nlp_toolkit.utils import jieba_load_userdict, is_ascii_text, regularize_punct
 from regularize import replace_to_common_words, remove_stopwords
 import conf
 from .ner import EntityRecognizer
 
-jieba_load_userdict()
 
 
 def fetch_tags(model, text):
@@ -31,6 +29,7 @@ def load_predict(model_name='model.pt', output_keyword=False):
     model = load_model(model_name)
 
     def predict(sentence):
+        jieba_load_userdict()
         sentence = regularize_punct(sentence)
         if not sentence:
             return '' if output_keyword else []

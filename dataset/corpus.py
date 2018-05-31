@@ -1,7 +1,7 @@
 import re
 import random
 
-from yxt_nlp.utils import regularize_punct, join_words
+from yxt_nlp_toolkit.utils import regularize_punct, join_words
 from itertools import cycle
 from conf import CORPUS_LIST
 

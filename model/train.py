@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from yxt_nlp.utils import jieba_load_userdict
-from yxt_nlp.common import Lang
-from yxt_nlp.embedding.glove import WordEmbedding
+from yxt_nlp_toolkit.utils import jieba_load_userdict
+from yxt_nlp_toolkit.common import Lang
+from yxt_nlp_toolkit.embedding.glove import WordEmbedding
 
 import conf
 from dataset import generate_dataset
@@ -95,6 +95,7 @@ def train_and_dump(from_model=None,
                    lang_pkl='lang.pt',
                    drop_n=0,
                    real_corpus_sample=0.3):
+    jieba_load_userdict()
     if from_model:
         model = EntityRecognizer.load(from_model)
         model_pkl_name = from_model
