@@ -9,7 +9,6 @@ import conf
 from .ner import EntityRecognizer
 
 
-
 def fetch_tags(model, text):
     words = tuple(replace_to_common_words(jieba.cut(text)))
     with torch.no_grad():

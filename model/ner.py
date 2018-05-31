@@ -8,7 +8,7 @@ import conf
 
 class EntityRecognizer(nn.Module):
 
-    def __init__(self, lang, embedding_dim=200, hidden_size=512, rnn_type='lstm', num_layers=2, ):
+    def __init__(self, lang, embedding_dim=200, hidden_size=512, rnn_type='lstm', num_layers=3):
         super(EntityRecognizer, self).__init__()
         self.hidden_size = hidden_size
         self.input_size = embedding_dim
