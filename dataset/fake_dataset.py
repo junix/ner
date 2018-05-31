@@ -2,7 +2,7 @@ import os
 import random
 import re
 
-from yxt_nlp.utils import jieba_load_userdict, regularize_punct
+from yxt_nlp.utils import jieba_load_userdict, regularize_punct, read_user_custom_words
 
 _current_dir = os.path.dirname(__file__)
 _new_hans_dict = _current_dir + '/' + 'chinese_words.txt'
@@ -233,7 +233,7 @@ def _read_titles():
 _all_yxt_tags = tuple(_read_tags())
 _all_yxt_titles = tuple(_read_titles())
 
-_all_words = tuple([w for w in set(_read_words(jieba_dict.JIEBA_USER_DICT)) if len(w) <= 4])
+_all_words = tuple([w for w in set(read_user_custom_words()) if len(w) <= 4])
 _all_words_and_puncts = _all_words + puncts
 
 
