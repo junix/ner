@@ -86,7 +86,7 @@ class EntityRecognizer(nn.Module):
                 nn.init.xavier_normal_(param)
         if pre_trained_wv is not None:
             device = self.embedding.weight.device
-            wv_weight = self.embedding.weight.detach().numpy()
+            wv_weight = self.embedding.weight.detach().cpu().numpy()
             self.lang.build_embedding(wv=pre_trained_wv, out_embedding=wv_weight)
             self.embedding.weight.data = torch.tensor(wv_weight, dtype=torch.float, device=device)
 
