@@ -102,9 +102,9 @@ def train_and_dump(from_model=None,
     else:
         lang = Lang.load(conf.path_in_zoo(lang_pkl))
         model = EntityRecognizer(lang=lang, embedding_dim=200, rnn_type=rnn_type)
-        # wv = WordEmbedding('/home/wanglijun/word2vec_models/glove.200d.txt')
-        # model.init_params(pre_trained_wv=wv)
-        model.init_params()
+        wv = WordEmbedding('/home/wanglijun/word2vec_models/glove.200d.txt')
+        model.init_params(pre_trained_wv=wv)
+        # model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
     model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
