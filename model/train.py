@@ -106,6 +106,7 @@ def train_and_dump(from_model=None,
         model.init_params(pre_trained_wv=wv)
         # model.init_params()
         model_pkl_name = 'model.{rnn_type}.{optimizer}'.format(rnn_type=rnn_type, optimizer=optimizer)
+        model.save(model_pkl_name)
     model.move_to_device(conf.device())
     dataset = islice(generate_dataset(real_corpus_sample), drop_n, None)
     _do_train(model, dataset, model_pkl_name, optimizer=optimizer, lr=lr)
