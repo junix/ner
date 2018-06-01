@@ -59,7 +59,8 @@ class EntityRecognizer(nn.Module):
         word_len = len(words)
         words = tuple(self.lang.ix(w) for w in words)
         words = to_tensor(words, dtype=torch.long)
-        words = self.embedding(words)
+        with torch.no_grad():
+            words = self.embedding(words)
         words = words.view(word_len, 1, -1)
         lstm_out, self.hidden = self.rnn(words, self.hidden)
         tag_space = self.hidden2tag(lstm_out.view(len(words), -1))
