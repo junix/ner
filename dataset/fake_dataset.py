@@ -296,7 +296,7 @@ def generate_a_faked_yxt_query():
 
 def generate_a_faked_query():
     rnd = random.randint(0, 1000)
-    if rnd < 3:
+    if rnd < 100:
         return generate_a_special_query()
     else:
         return generate_a_general_faked_query()
