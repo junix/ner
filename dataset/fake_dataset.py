@@ -330,6 +330,9 @@ special_query_patterns = (
     '{keyword}有哪些类别',
     '{keyword}包括哪些类别',
     '{keyword}是什么样子的',
+    '我要买{keyword}',
+    '我想买{keyword}',
+    "我要学习{keyword}",
 )
 
 
