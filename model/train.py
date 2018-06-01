@@ -6,7 +6,7 @@ import torch.optim as optim
 
 from yxt_nlp_toolkit.utils import jieba_load_userdict
 from yxt_nlp_toolkit.common import Lang
-from yxt_nlp_toolkit.embedding.glove import WordEmbedding
+from yxt_nlp_toolkit.embedding.general import WordEmbedding
 
 import conf
 from dataset import generate_dataset

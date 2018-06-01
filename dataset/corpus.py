@@ -1,8 +1,8 @@
-import re
-import random
-
-from yxt_nlp_toolkit.utils import regularize_punct, join_words, all_punctuations
 from itertools import cycle
+
+import random
+from yxt_nlp_toolkit.utils import regularize_punct, join_words, all_punctuations
+
 from conf import CORPUS_LIST
 
 

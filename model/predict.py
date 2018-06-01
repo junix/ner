@@ -1,16 +1,15 @@
 import re
 
 import torch
-import jieba
 
-from yxt_nlp_toolkit.utils import jieba_load_userdict, is_ascii_text, regularize_punct
+from yxt_nlp_toolkit.utils import jieba_load_userdict, is_ascii_text, regularize_punct, tokenizer
 from regularize import replace_to_common_words, remove_stopwords
 import conf
 from .ner import EntityRecognizer
 
 
 def fetch_tags(model, text):
-    words = tuple(replace_to_common_words(jieba.cut(text)))
+    words = tuple(replace_to_common_words(tokenizer(text)))
     with torch.no_grad():
         output = model[words]
         _, tags = output.max(dim=1)

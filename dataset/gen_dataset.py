@@ -1,5 +1,5 @@
-import jieba
 import random
+from yxt_nlp_toolkit.utils import tokenizer
 
 from dataset.corpus import generate_sentences as gen_real_sentences
 from dataset.fake_dataset import generate_a_faked_yxt_query, \
@@ -8,7 +8,7 @@ from dataset.fake_dataset import generate_a_faked_yxt_query, \
 
 def generate_dataset(real_corpus_sample=0.1):
     for sentence, faked in generate_tagged_sentences(real_corpus_sample):
-        words = [w for w in jieba.cut(sentence) if w]
+        words = tokenizer(sentence, skip_space=True)
         tags = list(tagging(words))
         words = [w for w, _ in tags]
         tags = [tag for _, tag in tags]
