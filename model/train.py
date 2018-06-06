@@ -75,7 +75,6 @@ def _do_train(model, dataset, model_pkl_name, optimizer, lr):
     for sentence, target, faked in training_dataset:
         target = to_tensor(target, dtype=torch.long)
         model.zero_grad()
-        model.hidden = model.init_hidden()
         tag_scores = model.forward(sentence)
         loss = criterion(tag_scores, target)
         loss.backward()

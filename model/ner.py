@@ -31,8 +31,8 @@ class EntityRecognizer(nn.Module):
                               num_layers=self.num_layers,
                               bidirectional=self.bidirectional)
 
-        self.hidden2tag = nn.Linear(hidden_size * 2 if self.bidirectional else 1, out_features=3)
-        self.hidden = self.init_hidden()
+        num_direction = 2 if self.bidirectional else 1
+        self.hidden2tag = nn.Linear(hidden_size * num_direction, out_features=3)
         self.move_to_device(conf.device())
 
     def move_to_device(self, device):
@@ -41,27 +41,26 @@ class EntityRecognizer(nn.Module):
         else:
             self.cuda()
 
-    def init_hidden(self):
-        bidirect = 2 if self.bidirectional else 1
-        if self.rnn_type == 'lstm':
-            return (
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device()),
-                torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device())
-            )
-        elif self.rnn_type == 'gru':
-            return torch.zeros(self.num_layers * bidirect, 1, self.hidden_size, device=conf.device())
+    # def init_hidden(self):
+    #     num_direction = 2 if self.bidirectional else 1
+    #     if self.rnn_type == 'lstm':
+    #         return (
+    #             torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device()),
+    #             torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device())
+    #         )
+    #     elif self.rnn_type == 'gru':
+    #         return torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device())
 
-    def __getitem__(self, words_seq):
-        self.hidden = self.init_hidden()
+    def __call__(self, words_seq):
         return self.forward(words_seq)
 
-    def forward(self, words):
+    def forward(self, words, hx=None):
         word_len = len(words)
         words = to_tensor(self.lang.to_indices(words), dtype=torch.long)
         with torch.no_grad():
             words = self.embedding(words)
         words = words.view(word_len, 1, -1)
-        lstm_out, self.hidden = self.rnn(words, self.hidden)
+        lstm_out, _ = self.rnn(words, hx)
         tag_space = self.hidden2tag(lstm_out.view(len(words), -1))
         tag_scores = F.log_softmax(tag_space, dim=1)
         return tag_scores

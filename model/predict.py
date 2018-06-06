@@ -11,7 +11,7 @@ from .ner import EntityRecognizer
 def fetch_tags(model, text):
     words = tuple(replace_to_common_words(tokenizer(text)))
     with torch.no_grad():
-        output = model[words]
+        output = model(words)
         _, tags = output.max(dim=1)
         return words, tags.tolist()
 
