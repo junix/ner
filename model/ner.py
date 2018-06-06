@@ -41,16 +41,6 @@ class EntityRecognizer(nn.Module):
         else:
             self.cuda()
 
-    # def init_hidden(self):
-    #     num_direction = 2 if self.bidirectional else 1
-    #     if self.rnn_type == 'lstm':
-    #         return (
-    #             torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device()),
-    #             torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device())
-    #         )
-    #     elif self.rnn_type == 'gru':
-    #         return torch.zeros(self.num_layers * num_direction, 1, self.hidden_size, device=conf.device())
-
     def __call__(self, words_seq):
         return self.forward(words_seq)
 
