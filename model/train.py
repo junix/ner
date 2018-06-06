@@ -90,7 +90,7 @@ def _do_train(model, dataset, model_pkl_name, optimizer, lr):
 def train_and_dump(from_model=None,
                    optimizer='sgd',
                    lr=1e-4,
-                   rnn_type='lstm',
+                   rnn_type='gru',
                    lang_pkl='lang.pt',
                    drop_n=0,
                    real_corpus_sample=0.3):
